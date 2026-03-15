@@ -213,6 +213,15 @@ body {
     text-align: center;
 }
 
+/* ===== Vokabel-Hervorhebung im Lesetext ===== */
+.vocab-hl {
+    background: #ffe9a0;
+    border-radius: 3px;
+    padding: 1px 3px;
+    font-weight: 600;
+    cursor: help;
+}
+
 /* ─── Genus / Drag & Drop ─── */
 .genus-grid {
     display: grid;
@@ -564,7 +573,7 @@ body {
         </div>
         <div class="nav-btn" onclick="showSection(1)">
             <span class="nav-emoji">📄</span>
-            <span class="nav-label">Originaltext</span>
+            <span class="nav-label">Lesetext</span>
         </div>
         <div class="nav-btn" onclick="showSection(2)">
             <span class="nav-emoji">🔤</span>
@@ -596,7 +605,7 @@ body {
     <!-- TAB 1: ORIGINALTEXT -->
     <div class="section" id="sec-1">
         <div style="padding: 28px 30px;">
-            <h2 style="margin-bottom: 20px;">📄 Originaltext</h2>
+            <h2 style="margin-bottom: 20px;">📄 Lesetext</h2>
             <div class="story-text">
 <p>Bauprojekte lassen sich grundsätzlich in Hochbau und Tiefbau unterteilen. Als Hochbau bezeichnet man alle Bauwerke, die oberhalb der Geländeoberfläche errichtet werden und sichtbar sind. Dazu gehören Verwaltungsgebäude, Schulen, Krankenhäuser, Hotels — und natürlich der Wohnungsbau. In Hamburg, wo der Wohnungsmarkt besonders angespannt ist, entstehen derzeit zahlreiche neue Wohnprojekte: von Sozialwohnungen bis hin zu exklusiven Luxuswohnungen an der Alster oder in der HafenCity.</p>
 
@@ -1429,6 +1438,57 @@ function showSection(idx) {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// ===== VOKABEL-HIGHLIGHTING IM LESETEXT =====
+function highlightVocabInText() {
+    var storyText = document.querySelector('.story-text') || document.querySelector('.lese-text');
+    if (!storyText) return;
+
+    var words = [];
+    if (typeof VOCAB !== 'undefined' && VOCAB.length) {
+        words = VOCAB.map(function(item) {
+            var term = item.term.replace(/^(der|die|das)\s+/i, '');
+            return term.split(',')[0].split('(')[0].trim();
+        });
+    }
+
+    words = words.filter(function(w) { return w && w.length > 3; });
+    if (words.length === 0) return;
+
+    function walkAndHighlight(node) {
+        if (node.nodeType === 3) {
+            var text = node.nodeValue;
+            var replaced = text;
+            words.forEach(function(word) {
+                var escaped = word.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+                var regex = new RegExp('(?<![a-zA-ZäöüÄÖÜß])(' + escaped + ')(?![a-zA-ZäöüÄÖÜß])', 'g');
+                replaced = replaced.replace(regex, '\x01$1\x02');
+            });
+            if (replaced !== text) {
+                var span = document.createElement('span');
+                var parts = replaced.split(/\x01|\x02/);
+                var isHighlight = false;
+                parts.forEach(function(part) {
+                    if (!part) { isHighlight = !isHighlight; return; }
+                    if (isHighlight) {
+                        var hl = document.createElement('span');
+                        hl.className = 'vocab-hl';
+                        hl.title = '📖 Vokabel aus der Vorentlastung';
+                        hl.textContent = part;
+                        span.appendChild(hl);
+                    } else {
+                        span.appendChild(document.createTextNode(part));
+                    }
+                    isHighlight = !isHighlight;
+                });
+                node.parentNode.replaceChild(span, node);
+            }
+        } else if (node.nodeType === 1 && node.nodeName !== 'SCRIPT') {
+            Array.from(node.childNodes).forEach(walkAndHighlight);
+        }
+    }
+    walkAndHighlight(storyText);
+}
+
 // INITIALIZATION ON LOAD
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -1439,6 +1499,7 @@ window.addEventListener('DOMContentLoaded', function() {
     initLuecken();
     initMC();
     initSatzbau();
+    highlightVocabInText();
 });
 </script>
 
