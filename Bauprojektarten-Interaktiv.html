@@ -1,0 +1,1446 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bauprojektarten – Interaktive DaF-Übung</title>
+    <style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+}
+
+.header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 30px;
+    text-align: center;
+}
+
+.header h1 {
+    font-size: 2.2em;
+    font-family: Georgia, 'Times New Roman', serif;
+    color: white;
+    margin-bottom: 8px;
+    border: none;
+    padding: 0;
+}
+
+.header .subtitle, .header p {
+    font-size: 1.0em;
+    font-family: Georgia, 'Times New Roman', serif;
+    opacity: 0.95;
+    color: rgba(255,255,255,0.9);
+    margin: 0;
+}
+
+.header .big-emoji {
+    font-size: 2.6em;
+    display: block;
+    margin-top: 8px;
+}
+
+.nav {
+    display: flex;
+    flex-wrap: nowrap;
+    background: #f8f9fa;
+    border-top: 1px solid #ddd;
+    border-left: 1px solid #ddd;
+    border-right: 1px solid #ddd;
+}
+
+.nav-btn {
+    flex: 1;
+    padding: 14px 10px;
+    text-align: center;
+    cursor: pointer;
+    border-right: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+    transition: all 0.3s;
+    font-size: 0.92em;
+    font-weight: 500;
+    color: #666;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.nav-btn:last-child { border-right: none; }
+.nav-btn:hover { background: #e8ecff; color: #667eea; }
+.nav-btn.active {
+    background: white;
+    color: #667eea;
+    font-weight: 700;
+    border-bottom: 3px solid #667eea;
+}
+
+.nav-emoji { font-size: 1.3em; line-height: 1.2; }
+.nav-label { font-size: 0.78em; margin-top: 2px; line-height: 1.2; }
+
+.section { display: none; }
+.section.active { display: block; }
+
+.tab-banner {
+    width: 100%;
+    max-height: 180px;
+    object-fit: cover;
+    border-radius: 10px;
+    margin-bottom: 18px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+}
+
+/* ─── Control Bar (Buttons + Timer) ─── */
+.control-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 18px;
+    padding: 6px 12px;
+    background: #f8f9fa;
+    border-radius: 8px;
+}
+
+.btn-row {
+    display: flex;
+    gap: 6px;
+}
+
+.btn {
+    background: none;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 4px 12px;
+    font-size: 0.82em;
+    color: #888;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-weight: 500;
+}
+
+.btn:hover {
+    border-color: #667eea;
+    color: #667eea;
+}
+
+.timer-display {
+    display: flex;
+    gap: 14px;
+    font-size: 0.82em;
+    color: #bbb;
+    font-variant-numeric: tabular-nums;
+}
+
+/* ─── Hilfe-Box ─── */
+.hilfe-box {
+    background: #f0f4ff;
+    border-left: 4px solid #667eea;
+    border-radius: 0 8px 8px 0;
+    padding: 14px 18px;
+    margin-bottom: 22px;
+    font-size: 0.9em;
+    color: #444;
+    line-height: 1.6;
+}
+
+/* ─── Vorentlastung / Vocab Cards ─── */
+.vocab-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 14px;
+    margin-bottom: 20px;
+}
+
+.vocab-card {
+    background: #f8f9ff;
+    border: 2px solid #667eea;
+    border-radius: 10px;
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.vocab-card .term {
+    font-weight: 700;
+    color: #667eea;
+    font-size: 1.05em;
+}
+
+.vocab-card .en {
+    font-weight: 600;
+    color: #764ba2;
+    font-size: 0.9em;
+}
+
+.vocab-card .def {
+    font-size: 0.85em;
+    color: #555;
+    line-height: 1.5;
+    font-style: italic;
+}
+
+/* ─── Story Text ─── */
+.story-text {
+    font-family: Georgia, 'Times New Roman', serif;
+    max-width: 600px;
+    text-align: justify;
+    line-height: 1.8;
+    font-size: 1.0em;
+    color: #333;
+    margin-bottom: 20px;
+    hyphens: auto;
+}
+
+.story-source {
+    font-size: 0.8em;
+    color: #aaa;
+    font-style: italic;
+    margin-top: 16px;
+    text-align: center;
+}
+
+/* ─── Genus / Drag & Drop ─── */
+.genus-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.drop-zone {
+    background: #f0f4ff;
+    border: 2px dashed #c5cae9;
+    border-radius: 10px;
+    padding: 10px;
+    min-height: 80px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: flex-start;
+    align-content: flex-start;
+    transition: background 0.2s;
+}
+
+.drop-zone .zone-label {
+    width: 100%;
+    text-align: center;
+    font-weight: 700;
+    color: #667eea;
+    font-size: 0.95em;
+    margin-bottom: 4px;
+    pointer-events: none;
+}
+
+.drop-zone.active, .drop-zone.dragover {
+    background: #e8eaff;
+    border-color: #667eea;
+}
+
+.genus-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.genus-chip {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    padding: 8px 14px;
+    border-radius: 20px;
+    cursor: move;
+    font-weight: 500;
+    font-size: 0.9em;
+    transition: all 0.2s;
+    user-select: none;
+    white-space: nowrap;
+}
+
+.genus-chip:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.genus-chip.correct {
+    background: #27ae60;
+}
+
+.genus-chip.wrong {
+    background: #e74c3c;
+}
+
+.genus-chip.selected {
+    outline: 3px solid #ffd700;
+    outline-offset: 2px;
+}
+
+/* ─── Lückentext ─── */
+.luecken-sentence {
+    background: #f8f9fa;
+    border-left: 4px solid #667eea;
+    border-radius: 0 8px 8px 0;
+    padding: 14px 16px;
+    margin-bottom: 12px;
+    font-size: 0.95em;
+    line-height: 1.6;
+}
+
+.blank {
+    border: none;
+    border-bottom: 2px solid #667eea;
+    background: #fff;
+    padding: 2px 6px;
+    font-family: inherit;
+    font-size: 0.95em;
+    color: #333;
+    outline: none;
+    transition: all 0.2s;
+}
+
+.blank:focus {
+    border-bottom-color: #764ba2;
+    background: #f0f7ff;
+}
+
+.blank.correct {
+    border-bottom-color: #27ae60;
+    background: #e8f8f0;
+}
+
+.blank.wrong {
+    border-bottom-color: #e74c3c;
+    background: #fdeaea;
+}
+
+.blank-hint {
+    color: #27ae60;
+    font-weight: 600;
+    font-size: 0.8em;
+    margin-left: 6px;
+}
+
+/* ─── Multiple Choice ─── */
+.mc-question {
+    background: #f8f9fa;
+    border-radius: 10px;
+    padding: 18px;
+    margin-bottom: 16px;
+}
+
+.mc-question h3 {
+    font-size: 0.95em;
+    color: #333;
+    margin-bottom: 12px;
+    font-weight: 600;
+}
+
+.mc-options {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.mc-option {
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 10px 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 0.9em;
+    color: #333;
+}
+
+.mc-option:hover {
+    border-color: #667eea;
+    background: #f0f4ff;
+}
+
+.mc-option.correct {
+    background: #e8f8f0;
+    border-color: #27ae60;
+    color: #27ae60;
+    font-weight: 600;
+}
+
+.mc-option.wrong {
+    background: #fdeaea;
+    border-color: #e74c3c;
+    color: #e74c3c;
+    cursor: not-allowed;
+}
+
+.mc-option.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* ─── Satzbau ─── */
+.chips-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 14px;
+    background: #f8f8f8;
+    border-radius: 10px;
+    min-height: 56px;
+    margin-bottom: 10px;
+}
+
+.sentence-builder {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 14px;
+    background: white;
+    border: 2px dashed #ccc;
+    border-radius: 10px;
+    min-height: 56px;
+    align-items: center;
+    margin-bottom: 6px;
+}
+
+.sentence-builder.correct {
+    border-color: #27ae60;
+    background: #f0fff4;
+}
+
+.sentence-builder.incorrect {
+    border-color: #e74c3c;
+    background: #fff5f5;
+}
+
+.chip {
+    background: white;
+    border: 2px solid #667eea;
+    color: #667eea;
+    padding: 8px 14px;
+    border-radius: 20px;
+    cursor: move;
+    font-weight: 500;
+    font-size: 0.9em;
+    transition: all 0.2s;
+    user-select: none;
+    white-space: nowrap;
+}
+
+.chip.correct {
+    background: #27ae60;
+    border-color: #27ae60;
+    color: white;
+}
+
+.chip.incorrect {
+    background: #e74c3c;
+    border-color: #e74c3c;
+    color: white;
+}
+
+.chip.punct-chip {
+    background: white;
+    border: 2px solid #667eea;
+    padding: 8px 16px;
+    color: #333;
+    font-weight: 700;
+    font-size: 1.3em;
+    min-width: 18px;
+    text-align: center;
+}
+
+.chip.punct-chip.correct {
+    background: #27ae60;
+    border-color: #27ae60;
+    color: white;
+}
+
+.chip.punct-chip.incorrect {
+    background: #e74c3c;
+    border-color: #e74c3c;
+    color: white;
+}
+
+.sb-punkt {
+    font-size: 1.1em;
+    font-weight: 700;
+    color: #27ae60;
+    margin-left: 2px;
+    align-self: center;
+    user-select: none;
+}
+
+.satzbau-feedback {
+    font-size: 0.9em;
+    font-weight: 600;
+    margin-top: 6px;
+    min-height: 1.2em;
+}
+
+.satzbau-feedback.correct {
+    color: #27ae60;
+}
+
+.satzbau-feedback.incorrect {
+    color: #e74c3c;
+}
+
+.sb-label {
+    font-weight: 600;
+    color: #667eea;
+    margin-bottom: 10px;
+    font-size: 0.95em;
+}
+
+.satzbau-item {
+    margin-bottom: 24px;
+}
+
+/* ─── Footer ─── */
+.author-footer {
+    text-align: center;
+    margin-top: 40px;
+    max-width: 1000px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 16px;
+    font-size: 0.8rem;
+    color: #aaa;
+}
+
+.author-footer a {
+    color: #aaa;
+}
+
+.author-name {
+    font-weight: 700;
+}
+
+/* ─── Responsive ─── */
+@media (max-width: 600px) {
+    body { padding: 8px; }
+    .nav { flex-wrap: wrap; }
+    .nav-btn {
+        flex: 1 1 33%;
+        min-width: 0;
+        font-size: 0.8em;
+        padding: 10px 6px;
+        border-right: 1px solid #ddd;
+    }
+    .nav-btn:last-child { border-right: 1px solid #ddd; }
+    .tab-banner { max-height: 120px; }
+    .control-bar { flex-direction: column; align-items: flex-start; gap: 10px; }
+    .timer-display { width: 100%; justify-content: space-between; }
+    .vocab-grid { grid-template-columns: 1fr; }
+    .genus-grid { grid-template-columns: repeat(2, 1fr); }
+}
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>Bauprojektarten</h1>
+        <p style="font-family: Georgia, serif;">B1+ – Kapitel 4 | Deutsch für Architekten</p>
+        <div class="big-emoji">🏗️</div>
+    </div>
+
+    <div class="nav">
+        <div class="nav-btn active" onclick="showSection(0)">
+            <span class="nav-emoji">📖</span>
+            <span class="nav-label">Vorentlastung</span>
+        </div>
+        <div class="nav-btn" onclick="showSection(1)">
+            <span class="nav-emoji">📄</span>
+            <span class="nav-label">Originaltext</span>
+        </div>
+        <div class="nav-btn" onclick="showSection(2)">
+            <span class="nav-emoji">🔤</span>
+            <span class="nav-label">Genus</span>
+        </div>
+        <div class="nav-btn" onclick="showSection(3)">
+            <span class="nav-emoji">✏️</span>
+            <span class="nav-label">Lückentext</span>
+        </div>
+        <div class="nav-btn" onclick="showSection(4)">
+            <span class="nav-emoji">☑️</span>
+            <span class="nav-label">Multiple-Choice</span>
+        </div>
+        <div class="nav-btn" onclick="showSection(5)">
+            <span class="nav-emoji">🧩</span>
+            <span class="nav-label">Satzbau</span>
+        </div>
+    </div>
+
+    <!-- TAB 0: VORENTLASTUNG -->
+    <div class="section active" id="sec-0">
+        <div style="padding: 28px 30px;">
+            <h2 style="margin-bottom: 20px;">📖 Vorentlastung</h2>
+            <p style="color: #666; margin-bottom: 20px;">Lerne diese Wörter, bevor du den Text liest.</p>
+            <div class="vocab-grid" id="vocabGrid"></div>
+        </div>
+    </div>
+
+    <!-- TAB 1: ORIGINALTEXT -->
+    <div class="section" id="sec-1">
+        <div style="padding: 28px 30px;">
+            <h2 style="margin-bottom: 20px;">📄 Originaltext</h2>
+            <div class="story-text">
+<p>Bauprojekte lassen sich grundsätzlich in Hochbau und Tiefbau unterteilen. Als Hochbau bezeichnet man alle Bauwerke, die oberhalb der Geländeoberfläche errichtet werden und sichtbar sind. Dazu gehören Verwaltungsgebäude, Schulen, Krankenhäuser, Hotels — und natürlich der Wohnungsbau. In Hamburg, wo der Wohnungsmarkt besonders angespannt ist, entstehen derzeit zahlreiche neue Wohnprojekte: von Sozialwohnungen bis hin zu exklusiven Luxuswohnungen an der Alster oder in der HafenCity.</p>
+
+<p>Der Tiefbau dagegen umfasst alle Bauwerke unterhalb oder auf der Geländeoberfläche: Straßen, Brücken, Tunnel, Kanäle und Versorgungsleitungen. Bei jedem Hochbauprojekt beginnt die Arbeit allerdings im Tiefbau — mit dem Aushub der Baugrube und dem Fundament.</p>
+
+<p>Ein wichtiger Begriff im Hochbau ist der Rohbau. Er bezeichnet die äußere Hülle des Gebäudes: Wände, Decken, das Dach — aber noch ohne Fenster und ohne Innenausbau. Erst danach beginnt der Innenausbau mit allen Arbeiten, die das Gebäude bewohnbar machen: Fußböden, Wandverkleidungen, Elektroinstallation, Sanitär und Heizung. Jede dieser Aufgaben wird als Gewerk bezeichnet. Bei Luxuswohnungen sind die Gewerke besonders vielfältig — von Natursteinböden über Smart-Home-Systeme bis zur individuellen Lichtplanung.</p>
+
+<p>Eine Besonderheit in Hamburg ist das Bauen im Bestand. Viele historische Gebäude werden nicht abgerissen, sondern saniert oder modernisiert. Bei einer Sanierung wird das Gebäude umfangreich erneuert, während eine Renovierung eher optische Verbesserungen umfasst. Oft entsteht durch eine Modernisierung auch eine Mischnutzung: Wohnungen in den Obergeschossen, Geschäfte oder Büros im Erdgeschoss.</p>
+
+<p>Vor jedem Bauvorhaben steht die Baugenehmigung. Der Bauherr stellt einen Bauantrag bei der zuständigen Behörde, die prüft, ob das Projekt den Vorschriften entspricht. Erst nach der Genehmigung darf gebaut werden.</p>
+            </div>
+            <div class="story-source">Quelle: Friedrich/Heidenreich, Deutsch für Architekten und Bauingenieure, Springer 2021, Kap. 4</div>
+        </div>
+    </div>
+
+    <!-- TAB 2: GENUS -->
+    <div class="section" id="sec-2">
+        <div style="padding: 28px 30px;">
+            <h2 style="margin-bottom: 20px;">🔤 Genus</h2>
+            <div class="control-bar">
+                <div class="btn-row">
+                    <button class="btn" onclick="showGenusSolution()">Lösungen</button>
+                    <button class="btn" onclick="resetGenus(); resetTimer(2);">Neu starten</button>
+                </div>
+                <div class="timer-display">
+                    <span>⏱ <span id="timer-2">00:00</span></span>
+                    <span>🏆 <span id="best-2">--:--</span></span>
+                </div>
+            </div>
+            <div class="hilfe-box">
+                <strong>Aufgabe:</strong> Sortiere die Wörter in die richtige Kategorie (der/die/das/pl).
+            </div>
+            <div class="genus-chips" id="genusChips"></div>
+            <div class="genus-grid" id="genusZones"></div>
+        </div>
+    </div>
+
+    <!-- TAB 3: LÜCKENTEXT -->
+    <div class="section" id="sec-3">
+        <div style="padding: 28px 30px;">
+            <h2 style="margin-bottom: 20px;">✏️ Lückentext</h2>
+            <div class="control-bar">
+                <div class="btn-row">
+                    <button class="btn" onclick="showLueckenSolution()">Lösungen</button>
+                    <button class="btn" onclick="resetLuecken(); resetTimer(3);">Neu starten</button>
+                </div>
+                <div class="timer-display">
+                    <span>⏱ <span id="timer-3">00:00</span></span>
+                    <span>🏆 <span id="best-3">--:--</span></span>
+                </div>
+            </div>
+            <div class="hilfe-box">
+                <strong>Aufgabe:</strong> Fülle die Lücken aus. Die Wörter aus der Vorentlastung können dir helfen!
+            </div>
+            <div id="lueckenContainer"></div>
+        </div>
+    </div>
+
+    <!-- TAB 4: MULTIPLE CHOICE -->
+    <div class="section" id="sec-4">
+        <div style="padding: 28px 30px;">
+            <h2 style="margin-bottom: 20px;">☑️ Multiple-Choice</h2>
+            <div class="control-bar">
+                <div class="btn-row">
+                    <button class="btn" onclick="resetMC(); resetTimer(4);">Neu starten</button>
+                </div>
+                <div class="timer-display">
+                    <span>⏱ <span id="timer-4">00:00</span></span>
+                    <span>🏆 <span id="best-4">--:--</span></span>
+                </div>
+            </div>
+            <div class="hilfe-box">
+                <strong>Aufgabe:</strong> Beantworte die Fragen zum Text. Klicke auf die richtige Antwort.
+            </div>
+            <div id="mcContainer"></div>
+        </div>
+    </div>
+
+    <!-- TAB 5: SATZBAU -->
+    <div class="section" id="sec-5">
+        <div style="padding: 28px 30px;">
+            <h2 style="margin-bottom: 20px;">🧩 Satzbau</h2>
+            <div class="control-bar">
+                <div class="btn-row">
+                    <button class="btn" onclick="showAllSolutions()">Lösungen</button>
+                    <button class="btn" onclick="resetSatzbau(); resetTimer(5);">Neu starten</button>
+                </div>
+                <div class="timer-display">
+                    <span>⏱ <span id="timer-5">00:00</span></span>
+                    <span>🏆 <span id="best-5">--:--</span></span>
+                </div>
+            </div>
+            <div class="hilfe-box">
+                <strong>Aufgabe:</strong> Ordne die Wörter in die richtige Reihenfolge. Ziehe die Chips in den grünen Bereich.
+            </div>
+            <div id="satzbauContainer"></div>
+        </div>
+    </div>
+
+    <div class="author-footer">
+        <span class="author-name">&copy; Frank Burkert</span> &middot; DaF-Materialien &middot;
+        <a href="mailto:FrankBurkert@fabdaf.onmicrosoft.com">FrankBurkert@fabdaf.onmicrosoft.com</a>
+    </div>
+
+</div><!-- /container -->
+
+<script>
+// ─────────────────────────────────────────────────────────────────────────────
+// TIMER SYSTEM
+// ─────────────────────────────────────────────────────────────────────────────
+
+var TIMER_PREFIX = 'architekten_kap4_';
+var timers = [null, null, null, null, null, null];  // Indices 2,3,4,5 werden genutzt
+var timerIntervals = [null, null, null, null, null, null];
+
+function fmtTime(seconds) {
+    var m = Math.floor(seconds / 60);
+    var s = seconds % 60;
+    return (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
+}
+
+function timerAutoStart(idx) {
+    if (timers[idx] !== null) return;
+    timers[idx] = 0;
+    timerIntervals[idx] = setInterval(function() {
+        timers[idx]++;
+        document.getElementById('timer-' + idx).textContent = fmtTime(timers[idx]);
+    }, 1000);
+}
+
+function timerStop(idx) {
+    if (timerIntervals[idx]) {
+        clearInterval(timerIntervals[idx]);
+        timerIntervals[idx] = null;
+    }
+    var best = localStorage.getItem(TIMER_PREFIX + idx);
+    if (!best || timers[idx] < parseInt(best)) {
+        localStorage.setItem(TIMER_PREFIX + idx, timers[idx]);
+        document.getElementById('best-' + idx).textContent = fmtTime(timers[idx]);
+    }
+}
+
+function resetTimer(idx) {
+    if (timerIntervals[idx]) {
+        clearInterval(timerIntervals[idx]);
+        timerIntervals[idx] = null;
+    }
+    timers[idx] = null;
+    document.getElementById('timer-' + idx).textContent = '00:00';
+}
+
+function loadBestTimes() {
+    for (var i = 0; i < 6; i++) {
+        var best = localStorage.getItem(TIMER_PREFIX + i);
+        if (best) {
+            document.getElementById('best-' + i).textContent = fmtTime(parseInt(best));
+        }
+    }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// TAB 0: VORENTLASTUNG
+// ─────────────────────────────────────────────────────────────────────────────
+
+var VOCAB = [
+    { term: 'das Bauvorhaben, -', en: 'the construction project', def: 'Alle Planungs- und Bauarbeiten für ein neues oder verändertes Gebäude.' },
+    { term: 'der Hochbau (kein Pl.)', en: 'structural engineering / above-ground construction', def: 'Alles, was oberhalb der Geländeoberfläche gebaut wird und sichtbar ist.' },
+    { term: 'der Tiefbau (kein Pl.)', en: 'civil engineering / below-ground construction', def: 'Alle Bauwerke unterhalb oder auf der Geländeoberfläche: Straßen, Tunnel, Kanäle.' },
+    { term: 'der Innenausbau (kein Pl.)', en: 'interior finishing / fit-out', def: 'Alle Arbeiten nach dem Rohbau: Fußboden, Wände, Decken, Haustechnik.' },
+    { term: 'der Rohbau, -ten', en: 'shell construction', def: 'Die äußere Hülle des Gebäudes — ohne Innenausbau, ohne Fenster.' },
+    { term: 'das Gewerk, -e', en: 'trade / building trade', def: 'Eine Teilaufgabe der Bauleistung, z. B. Malerarbeiten oder Elektroinstallation.' },
+    { term: 'die Sanierung, -en', en: 'renovation / refurbishment', def: 'Umfangreiche Baumaßnahmen, um ein Gebäude in einen guten Zustand zu bringen.' },
+    { term: 'die Modernisierung, -en', en: 'modernization', def: 'Eine Immobilie wird auf den neuesten Stand gebracht, z. B. neue Heizungsanlage.' },
+    { term: 'die Mischnutzung, -en', en: 'mixed use', def: 'Ein Gebäude mit mehreren Nutzungen: z. B. Wohnungen oben, Büros unten.' },
+    { term: 'die Baugenehmigung, -en', en: 'building permit', def: 'Die offizielle Erlaubnis der Behörde, ein Bauvorhaben zu starten.' }
+];
+
+function initVorentlastung() {
+    var grid = document.getElementById('vocabGrid');
+    grid.innerHTML = '';
+    VOCAB.forEach(function(v) {
+        var card = document.createElement('div');
+        card.className = 'vocab-card';
+        card.innerHTML = '<div class="term">' + v.term + '</div>' +
+                        '<div class="en">' + v.en + '</div>' +
+                        '<div class="def">' + v.def + '</div>';
+        grid.appendChild(card);
+    });
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// TAB 2: GENUS
+// ─────────────────────────────────────────────────────────────────────────────
+
+var GENUS_DATA = [
+    { word: '🏗️ Hochbau', cat: 'der' },
+    { word: '🔧 Tiefbau', cat: 'der' },
+    { word: '🏠 Rohbau', cat: 'der' },
+    { word: '🎨 Innenausbau', cat: 'der' },
+    { word: '📋 Bauantrag', cat: 'der' },
+    { word: '🏢 Wohnungsbau', cat: 'der' },
+    { word: '🔨 Gewerk', cat: 'das' },
+    { word: '📐 Bauvorhaben', cat: 'das' },
+    { word: '🏘️ Grundstück', cat: 'das' },
+    { word: '🧱 Gebäude', cat: 'das' },
+    { word: '🏗️ Sanierung', cat: 'die' },
+    { word: '🔄 Modernisierung', cat: 'die' },
+    { word: '📜 Baugenehmigung', cat: 'die' },
+    { word: '🏠 Mischnutzung', cat: 'die' },
+    { word: '🏘️ Bestandsmaßnahmen', cat: 'pl' }
+];
+
+var draggedChip = null;
+
+function initGenus() {
+    var chipsCont = document.getElementById('genusChips');
+    chipsCont.innerHTML = '';
+    var zonesCont = document.getElementById('genusZones');
+    zonesCont.innerHTML = '';
+
+    // Fisher-Yates shuffle
+    var shuffled = GENUS_DATA.slice();
+    for (var i = shuffled.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var tmp = shuffled[i]; shuffled[i] = shuffled[j]; shuffled[j] = tmp;
+    }
+
+    // Chips erstellen
+    shuffled.forEach(function(item) {
+        var chip = document.createElement('div');
+        chip.className = 'genus-chip';
+        chip.textContent = item.word;
+        chip.dataset.cat = item.cat;
+        chip.draggable = true;
+
+        chip.addEventListener('dragstart', function(e) {
+            draggedChip = chip;
+            e.dataTransfer.setData('text/plain', '');
+        });
+        chip.addEventListener('dragend', function() {
+            colorAllGenusChips();
+        });
+        // Klick-Modus: selektieren/deselektieren
+        chip.addEventListener('click', function() {
+            if (chip.classList.contains('selected')) {
+                chip.classList.remove('selected');
+            } else {
+                document.querySelectorAll('.genus-chip.selected').forEach(function(c) { c.classList.remove('selected'); });
+                chip.classList.add('selected');
+            }
+        });
+
+        chipsCont.appendChild(chip);
+    });
+
+    // Bank als Drop-Ziel (Chips zurücklegen)
+    chipsCont.addEventListener('dragover', function(e) { e.preventDefault(); });
+    chipsCont.addEventListener('drop', function(e) {
+        e.preventDefault();
+        if (draggedChip) { chipsCont.appendChild(draggedChip); draggedChip = null; colorAllGenusChips(); }
+    });
+    // Klick auf Bank: selektierten Chip zurücklegen
+    chipsCont.addEventListener('click', function(e) {
+        if (e.target === chipsCont) {
+            var sel = document.querySelector('.genus-chip.selected');
+            if (sel) { chipsCont.appendChild(sel); sel.classList.remove('selected'); colorAllGenusChips(); }
+        }
+    });
+
+    // Drop-Zonen erstellen
+    var categories = ['der', 'die', 'das', 'pl'];
+    categories.forEach(function(cat) {
+        var zone = document.createElement('div');
+        zone.className = 'drop-zone';
+        zone.dataset.cat = cat;
+
+        var label = document.createElement('div');
+        label.className = 'zone-label';
+        label.textContent = (cat === 'pl' ? 'Plural' : cat);
+        zone.appendChild(label);
+
+        zone.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            zone.classList.add('active');
+        });
+        zone.addEventListener('dragleave', function() {
+            zone.classList.remove('active');
+        });
+        zone.addEventListener('drop', function(e) {
+            e.preventDefault();
+            zone.classList.remove('active');
+            if (draggedChip) {
+                zone.appendChild(draggedChip);
+                draggedChip = null;
+                timerAutoStart(2);
+                colorAllGenusChips();
+                if (checkGenusAllDone()) { timerStop(2); }
+            }
+        });
+        // Klick auf Zone: selektierten Chip einsetzen
+        zone.addEventListener('click', function(e) {
+            if (e.target.classList.contains('genus-chip')) return; // Chip-Klick, nicht Zone
+            var sel = document.querySelector('.genus-chip.selected');
+            if (sel) {
+                zone.appendChild(sel);
+                sel.classList.remove('selected');
+                timerAutoStart(2);
+                colorAllGenusChips();
+                if (checkGenusAllDone()) { timerStop(2); }
+            }
+        });
+
+        zonesCont.appendChild(zone);
+    });
+
+    colorAllGenusChips();
+}
+
+function colorAllGenusChips() {
+    var chips = document.querySelectorAll('.genus-chip');
+    chips.forEach(function(c) {
+        var zone = c.closest('.drop-zone');
+        c.classList.remove('correct', 'wrong');
+        if (zone) {
+            c.classList.add(c.dataset.cat === zone.dataset.cat ? 'correct' : 'wrong');
+        }
+    });
+}
+
+function checkGenusAllDone() {
+    var chips = document.querySelectorAll('.genus-chip');
+    return Array.from(chips).every(function(c) {
+        return c.classList.contains('correct');
+    });
+}
+
+function showGenusSolution() {
+    var zonesCont = document.getElementById('genusZones');
+    var categories = ['der', 'die', 'das', 'pl'];
+
+    categories.forEach(function(cat) {
+        var zone = zonesCont.querySelector('[data-cat="' + cat + '"]');
+        var toMove = Array.from(document.querySelectorAll('.genus-chip')).filter(function(c) {
+            return c.dataset.cat === cat;
+        });
+        toMove.forEach(function(chip) {
+            zone.appendChild(chip);
+        });
+    });
+
+    colorAllGenusChips();
+    timerAutoStart(2);
+}
+
+function resetGenus() {
+    initGenus();
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// TAB 3: LÜCKENTEXT
+// ─────────────────────────────────────────────────────────────────────────────
+
+var LUECKEN_DATA = [
+    { segs: [{t:'Ein '},{b:'Bauvorhaben',s:'l'},{t:' beinhaltet alle Planungs- und Durchführungsarbeiten.'}], hint:'Projekt' },
+    { segs: [{t:'Der '},{b:'Hochbau',s:'m'},{t:' beinhaltet alles oberhalb der Geländeoberfläche.'}], hint:'Gegenteil von Tiefbau' },
+    { segs: [{t:'Zum '},{b:'Rohbau',s:'m'},{t:' gehört die äußere Hülle des Gebäudes.'}], hint:'vor dem Innenausbau' },
+    { segs: [{t:'Der '},{b:'Innenausbau',s:'l'},{t:' umfasst Fußboden, Wände und Haustechnik.'}], hint:'nach dem Rohbau' },
+    { segs: [{t:'Ein '},{b:'Gewerk',s:'m'},{t:' ist eine Teilaufgabe der gesamten Bauleistung.'}], hint:'z.B. Malerarbeiten' },
+    { segs: [{t:'Bei der '},{b:'Sanierung',s:'l'},{t:' wird ein Gebäude umfangreich erneuert.'}], hint:'umfangreiche Erneuerung' },
+    { segs: [{t:'Eine '},{b:'Modernisierung',s:'xl'},{t:' bringt eine Immobilie auf den neuesten Stand.'}], hint:'z.B. neue Heizung' },
+    { segs: [{t:'Die '},{b:'Mischnutzung',s:'l'},{t:' bedeutet: Wohnungen und Büros in einem Gebäude.'}], hint:'mehrere Nutzungen' },
+    { segs: [{t:'Vor dem Baubeginn braucht man eine '},{b:'Baugenehmigung',s:'xl'},{t:' von der Behörde.'}], hint:'offizielle Erlaubnis' },
+    { segs: [{t:'Bei Luxuswohnungen sind die '},{b:'Gewerke',s:'m'},{t:' besonders vielfältig.'}], hint:'Plural von Gewerk' }
+];
+
+function initLuecken() {
+    var cont = document.getElementById('lueckenContainer');
+    cont.innerHTML = '';
+
+    LUECKEN_DATA.forEach(function(item, idx) {
+        var sent = document.createElement('div');
+        sent.className = 'luecken-sentence';
+
+        item.segs.forEach(function(seg, sidx) {
+            if (seg.t) {
+                sent.appendChild(document.createTextNode(seg.t));
+            } else {
+                var inp = document.createElement('input');
+                inp.type = 'text';
+                inp.className = 'blank';
+                inp.placeholder = 'Deutsch';
+                inp.dataset.correct = seg.b;
+                inp.dataset.sentence = idx;
+                inp.data_idx = sidx;
+                inp.style.width = (seg.s === 'l' ? '140px' : (seg.s === 'xl' ? '160px' : '100px'));
+
+                inp.addEventListener('input', function() {
+                    liveCheck(inp, item);
+                    timerAutoStart(3);
+                });
+
+                sent.appendChild(inp);
+            }
+        });
+
+        cont.appendChild(sent);
+    });
+}
+
+function liveCheck(inp, item) {
+    var correct = inp.dataset.correct.toLowerCase();
+    var val = inp.value.toLowerCase().trim();
+
+    if (val === correct) {
+        inp.classList.remove('wrong');
+        inp.classList.add('correct');
+    } else if (val === '' || correct.startsWith(val)) {
+        inp.classList.remove('correct', 'wrong');
+    } else {
+        inp.classList.remove('correct');
+        inp.classList.add('wrong');
+    }
+
+    if (checkLueckenAllDone()) {
+        timerStop(3);
+    }
+}
+
+function checkLueckenAllDone() {
+    var inputs = document.querySelectorAll('.blank');
+    return Array.from(inputs).every(function(inp) {
+        return inp.classList.contains('correct');
+    });
+}
+
+function showLueckenSolution() {
+    var inputs = document.querySelectorAll('.blank');
+    inputs.forEach(function(inp) {
+        inp.value = inp.dataset.correct;
+        inp.classList.add('correct');
+    });
+    timerAutoStart(3);
+}
+
+function resetLuecken() {
+    initLuecken();
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// TAB 4: MULTIPLE CHOICE
+// ─────────────────────────────────────────────────────────────────────────────
+
+var MC_DATA = [
+    { q: 'Was ist das Hauptthema des Textes?', opts: ['Die verschiedenen Bauprojektarten in Deutschland', 'Die Geschichte des Wohnungsbaus in Hamburg', 'Die Ausbildung zum Architekten', 'Die Kosten von Luxuswohnungen'], correct: 0 },
+    { q: 'Was ist der Unterschied zwischen Hochbau und Tiefbau?', opts: ['Hochbau ist oberhalb, Tiefbau unterhalb der Geländeoberfläche', 'Hochbau ist teurer als Tiefbau', 'Hochbau braucht mehr Arbeiter', 'Tiefbau ist moderner als Hochbau'], correct: 0 },
+    { q: 'Was gehört NICHT zum Hochbau?', opts: ['Tunnelbau', 'Wohnungsbau', 'Verwaltungsgebäude', 'Hotels'], correct: 0 },
+    { q: 'Was bedeutet „Mischnutzung“?', opts: ['Ein Gebäude hat verschiedene Nutzungen (z. B. Wohnen und Büro)', 'Ein Gebäude wird aus verschiedenen Materialien gebaut', 'Mehrere Architekten arbeiten am gleichen Projekt', 'Das Gebäude steht in einem gemischten Stadtviertel'], correct: 0 },
+    { q: 'Was ist der Rohbau?', opts: ['Die äußere Hülle des Gebäudes ohne Innenausbau', 'Ein unfertiges Projekt', 'Ein Gebäude aus rohem Holz', 'Die erste Planungsphase'], correct: 0 },
+    { q: 'Was gehört zum Innenausbau?', opts: ['Fußboden, Wandverkleidung und Haustechnik', 'Fundamente und Keller', 'Straßenbau und Kanalisation', 'Fassade und Dach'], correct: 0 },
+    { q: 'Was ist ein „Gewerk“?', opts: ['Eine Teilaufgabe der Bauleistung', 'Ein Werkzeug auf der Baustelle', 'Ein Architekturbüro', 'Ein Bauvertrag'], correct: 0 },
+    { q: 'Was ist der Unterschied zwischen Sanierung und Renovierung?', opts: ['Sanierung ist umfangreicher als Renovierung', 'Renovierung ist teurer', 'Sanierung betrifft nur das Dach', 'Es gibt keinen Unterschied'], correct: 0 },
+    { q: 'Warum ist „Bauen im Bestand“ in Hamburg besonders wichtig?', opts: ['Weil es viele historische Gebäude gibt, die modernisiert werden müssen', 'Weil es in Hamburg kein freies Bauland gibt', 'Weil Neubauten in Hamburg verboten sind', 'Weil Hamburger nur alte Häuser mögen'], correct: 0 },
+    { q: 'Was braucht man vor dem Baubeginn von der Behörde?', opts: ['Eine Baugenehmigung', 'Einen Architektenvertrag', 'Eine Versicherung', 'Einen Finanzierungsplan'], correct: 0 }
+];
+
+function initMC() {
+    var cont = document.getElementById('mcContainer');
+    cont.innerHTML = '';
+
+    MC_DATA.forEach(function(item, idx) {
+        var q = document.createElement('div');
+        q.className = 'mc-question';
+
+        var h = document.createElement('h3');
+        h.textContent = item.q;
+        q.appendChild(h);
+
+        var opts = document.createElement('div');
+        opts.className = 'mc-options';
+
+        item.opts.forEach(function(opt, oidx) {
+            var btn = document.createElement('div');
+            btn.className = 'mc-option';
+            btn.textContent = opt;
+            btn.dataset.qidx = idx;
+            btn.dataset.oidx = oidx;
+
+            btn.addEventListener('click', function() {
+                var isCorrect = (oidx === item.correct);
+                btn.classList.add(isCorrect ? 'correct' : 'wrong');
+
+                // Disable all other options
+                Array.from(opts.querySelectorAll('.mc-option')).forEach(function(o) {
+                    if (o !== btn) o.classList.add('disabled');
+                });
+
+                timerAutoStart(4);
+                if (checkMCAllDone()) {
+                    timerStop(4);
+                }
+            });
+
+            opts.appendChild(btn);
+        });
+
+        q.appendChild(opts);
+        cont.appendChild(q);
+    });
+}
+
+function checkMCAllDone() {
+    var qs = document.querySelectorAll('.mc-question');
+    return Array.from(qs).every(function(q) {
+        return q.querySelector('.mc-option.correct') !== null;
+    });
+}
+
+function resetMC() {
+    initMC();
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// TAB 5: SATZBAU
+// ─────────────────────────────────────────────────────────────────────────────
+
+var satzbauData = [
+    { parts: ['der', 'Hochbau', 'umfasst', 'alle', 'Bauwerke', ',', 'die', 'oberhalb', 'der', 'Geländeoberfläche', 'errichtet', 'werden'], valid: [['der', 'Hochbau', 'umfasst', 'alle', 'Bauwerke', ',', 'die', 'oberhalb', 'der', 'Geländeoberfläche', 'errichtet', 'werden']], punct: '.' },
+    { parts: ['zum', 'Wohnungsbau', 'gehören', 'Einfamilienhäuser', ',', 'Mehrfamilienhäuser', 'und', 'auch', 'Luxuswohnungen', 'im', 'gehobenen', 'Segment'], valid: [['zum', 'Wohnungsbau', 'gehören', 'Einfamilienhäuser', ',', 'Mehrfamilienhäuser', 'und', 'auch', 'Luxuswohnungen', 'im', 'gehobenen', 'Segment']], punct: '.' },
+    { parts: ['wenn', 'der', 'Rohbau', 'steht', ',', 'beginnen', 'die', 'Arbeiten', 'am', 'Innenausbau', 'und', 'an', 'der', 'Fassade'], valid: [['wenn', 'der', 'Rohbau', 'steht', ',', 'beginnen', 'die', 'Arbeiten', 'am', 'Innenausbau', 'und', 'an', 'der', 'Fassade']], punct: '.' },
+    { parts: ['beim', 'Innenausbau', 'arbeiten', 'viele', 'verschiedene', 'Gewerke', ',', 'die', 'gut', 'koordiniert', 'werden', 'müssen'], valid: [['beim', 'Innenausbau', 'arbeiten', 'viele', 'verschiedene', 'Gewerke', ',', 'die', 'gut', 'koordiniert', 'werden', 'müssen']], punct: '.' },
+    { parts: ['eine', 'Sanierung', 'ist', 'deutlich', 'umfangreicher', 'als', 'eine', 'Renovierung', ',', 'weil', 'auch', 'die', 'Bausubstanz', 'erneuert', 'wird'], valid: [['eine', 'Sanierung', 'ist', 'deutlich', 'umfangreicher', 'als', 'eine', 'Renovierung', ',', 'weil', 'auch', 'die', 'Bausubstanz', 'erneuert', 'wird']], punct: '.' },
+    { parts: ['bei', 'Luxuswohnungen', 'sind', 'die', 'Ansprüche', 'an', 'den', 'Innenausbau', 'besonders', 'hoch', ',', 'zum', 'Beispiel', 'bei', 'Böden', 'und', 'Sanitär'], valid: [['bei', 'Luxuswohnungen', 'sind', 'die', 'Ansprüche', 'an', 'den', 'Innenausbau', 'besonders', 'hoch', ',', 'zum', 'Beispiel', 'bei', 'Böden', 'und', 'Sanitär']], punct: '.' },
+    { parts: ['bevor', 'der', 'Bau', 'beginnt', ',', 'muss', 'die', 'Baugenehmigung', 'von', 'der', 'Behörde', 'vorliegen'], valid: [['bevor', 'der', 'Bau', 'beginnt', ',', 'muss', 'die', 'Baugenehmigung', 'von', 'der', 'Behörde', 'vorliegen']], punct: '.' },
+    { parts: ['der', 'Bauherr', 'entscheidet', ',', 'ob', 'eine', 'Modernisierung', 'oder', 'ein', 'kompletter', 'Neubau', 'sinnvoller', 'ist'], valid: [['der', 'Bauherr', 'entscheidet', ',', 'ob', 'eine', 'Modernisierung', 'oder', 'ein', 'kompletter', 'Neubau', 'sinnvoller', 'ist']], punct: '.' },
+    { parts: ['in', 'Hamburg', 'gibt', 'es', 'viele', 'historische', 'Gebäude', ',', 'die', 'denkmalgerecht', 'saniert', 'werden', 'müssen'], valid: [['in', 'Hamburg', 'gibt', 'es', 'viele', 'historische', 'Gebäude', ',', 'die', 'denkmalgerecht', 'saniert', 'werden', 'müssen']], punct: '.' },
+    { parts: ['zum', 'Tiefbau', 'gehören', 'unter', 'anderem', 'Fundamente', ',', 'Kanäle', 'und', 'Straßen', 'unterhalb', 'der', 'Geländeoberfläche'], valid: [['zum', 'Tiefbau', 'gehören', 'unter', 'anderem', 'Fundamente', ',', 'Kanäle', 'und', 'Straßen', 'unterhalb', 'der', 'Geländeoberfläche']], punct: '.' }
+];
+
+var sbDragged = null;
+
+function sbCapitalize(str) {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+function getSbCursor() {
+    var c = document.getElementById('sb-insert-cursor');
+    if (!c) {
+        c = document.createElement('div');
+        c.id = 'sb-insert-cursor';
+        c.style.cssText = 'width:3px; min-height:32px; background:#e67e22; border-radius:2px; align-self:stretch; pointer-events:none; flex-shrink:0;';
+    }
+    return c;
+}
+
+function getSbInsertPos(zone, clientX) {
+    var chips = Array.from(zone.querySelectorAll('.chip'));
+    for (var i = 0; i < chips.length; i++) {
+        var r = chips[i].getBoundingClientRect();
+        if (clientX < r.left + r.width / 2) return chips[i];
+    }
+    return null;
+}
+
+function sbUpdateCapitalization(row) {
+    var chips = Array.from(row.querySelectorAll('.chip'));
+    chips.forEach(function(c, i) {
+        var orig = c.dataset.orig;
+        if (orig === ',' || orig === ';') return;
+        var isProper = orig.charAt(0) === orig.charAt(0).toUpperCase() &&
+                      orig.charAt(0) !== orig.charAt(0).toLowerCase();
+        if (isProper) {
+            c.textContent = orig;
+        } else {
+            c.textContent = (i === 0) ? sbCapitalize(orig) : orig;
+        }
+    });
+}
+
+function sbMakeChip(word) {
+    var chip = document.createElement('div');
+    chip.className = 'chip';
+    if (word === ',' || word === ';') chip.classList.add('punct-chip');
+    chip.textContent = word;
+    chip.dataset.orig = word;
+    chip.draggable = true;
+
+    chip.addEventListener('dragstart', function(e) {
+        sbDragged = chip;
+        e.dataTransfer.setData('text/plain', '');
+        setTimeout(function() { chip.style.opacity = '0.4'; }, 0);
+    });
+
+    chip.addEventListener('dragend', function() {
+        chip.style.opacity = '';
+        sbDragged = null;
+        var c = document.getElementById('sb-insert-cursor');
+        if (c && c.parentNode) c.parentNode.removeChild(c);
+    });
+
+    return chip;
+}
+
+function sbRegisterZone(zone, idx) {
+    zone.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        if (!sbDragged) return;
+        var cursor = getSbCursor();
+        var before = getSbInsertPos(zone, e.clientX);
+        if (before) zone.insertBefore(cursor, before);
+        else zone.appendChild(cursor);
+    });
+
+    zone.addEventListener('dragleave', function(e) {
+        if (!zone.contains(e.relatedTarget)) {
+            var c = document.getElementById('sb-insert-cursor');
+            if (c && c.parentNode === zone) zone.removeChild(c);
+        }
+    });
+
+    zone.addEventListener('drop', function(e) {
+        e.preventDefault();
+        if (!sbDragged) return;
+        var cursor = document.getElementById('sb-insert-cursor');
+        if (cursor && cursor.parentNode === zone) {
+            zone.insertBefore(sbDragged, cursor);
+            zone.removeChild(cursor);
+        } else {
+            zone.appendChild(sbDragged);
+        }
+        sbDragged = null;
+        var row = document.getElementById('sb-row-' + idx);
+        sbUpdateCapitalization(row);
+        sbCheckAuto(idx);
+    });
+}
+
+function sbColorRow(idx) {
+    var row = document.getElementById('sb-row-' + idx);
+    var chips = Array.from(row.querySelectorAll('.chip'));
+    var order = chips.map(function(c) { return c.dataset.orig; });
+    var ok = satzbauData[idx].valid.some(function(v) {
+        return JSON.stringify(v) === JSON.stringify(order);
+    });
+
+    chips.forEach(function(c) {
+        c.classList.remove('correct', 'incorrect');
+        c.classList.add(ok ? 'correct' : 'incorrect');
+    });
+
+    var existing = row.querySelector('.sb-punkt');
+    if (existing) existing.parentNode.removeChild(existing);
+    if (ok) {
+        var punkt = document.createElement('span');
+        punkt.className = 'sb-punkt';
+        punkt.textContent = satzbauData[idx].punct || '.';
+        row.appendChild(punkt);
+    }
+    return ok;
+}
+
+function sbCheckAuto(idx) {
+    var bank = document.getElementById('sb-bank-' + idx);
+    var row = document.getElementById('sb-row-' + idx);
+    var fb = document.getElementById('sb-fb-' + idx);
+
+    if (bank.querySelectorAll('.chip').length > 0) {
+        row.querySelectorAll('.chip').forEach(function(c) {
+            c.classList.remove('correct', 'incorrect');
+        });
+        row.classList.remove('correct', 'incorrect');
+        fb.textContent = '';
+        return;
+    }
+
+    setTimeout(function() {
+        timerAutoStart(5);
+        var ok = sbColorRow(idx);
+        if (ok) {
+            row.classList.add('correct'); row.classList.remove('incorrect');
+            fb.className = 'satzbau-feedback correct';
+            fb.textContent = '✓ Korrekt!';
+            sbCheckAllDone();
+        } else {
+            row.classList.add('incorrect'); row.classList.remove('correct');
+            fb.className = 'satzbau-feedback incorrect';
+            fb.textContent = '✗ Falsche Reihenfolge – verschiebe die Chips!';
+        }
+    }, 500);
+}
+
+function sbCheckAllDone() {
+    var allOk = satzbauData.every(function(_, i) {
+        var row = document.getElementById('sb-row-' + i);
+        return row && row.classList.contains('correct');
+    });
+    if (allOk) timerStop(5);
+}
+
+function sbShowSolution(idx) {
+    var bank = document.getElementById('sb-bank-' + idx);
+    var row = document.getElementById('sb-row-' + idx);
+    var fb = document.getElementById('sb-fb-' + idx);
+    var solution = satzbauData[idx].valid[0];
+
+    var allChips = {};
+    Array.from(bank.querySelectorAll('.chip')).forEach(function(c) { allChips[c.dataset.orig] = c; });
+    Array.from(row.querySelectorAll('.chip')).forEach(function(c) { allChips[c.dataset.orig] = c; });
+
+    while (bank.firstChild) bank.removeChild(bank.firstChild);
+    while (row.firstChild) row.removeChild(row.firstChild);
+
+    solution.forEach(function(word, i) {
+        var chip = allChips[word];
+        if (chip) {
+            if (word !== ',' && word !== ';') {
+                chip.textContent = (i === 0) ? sbCapitalize(word) : word;
+            }
+            chip.classList.remove('correct', 'incorrect');
+            row.appendChild(chip);
+        }
+    });
+
+    fb.textContent = '';
+    setTimeout(function() { sbCheckAuto(idx); }, 100);
+}
+
+function sbResetOne(idx) {
+    var bank = document.getElementById('sb-bank-' + idx);
+    var row = document.getElementById('sb-row-' + idx);
+    var fb = document.getElementById('sb-fb-' + idx);
+
+    while (bank.firstChild) bank.removeChild(bank.firstChild);
+    while (row.firstChild) row.removeChild(row.firstChild);
+    row.classList.remove('correct', 'incorrect');
+    fb.textContent = '';
+    fb.className = 'satzbau-feedback';
+
+    var existing = row.querySelector('.sb-punkt');
+    if (existing) existing.parentNode.removeChild(existing);
+
+    var parts = satzbauData[idx].parts.slice();
+    for (var i = parts.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var tmp = parts[i]; parts[i] = parts[j]; parts[j] = tmp;
+    }
+    parts.forEach(function(word) { bank.appendChild(sbMakeChip(word)); });
+}
+
+function initSatzbau() {
+    var container = document.getElementById('satzbauContainer');
+    container.innerHTML = '';
+
+    satzbauData.forEach(function(ex, idx) {
+        var item = document.createElement('div');
+        item.className = 'satzbau-item';
+
+        var bank = document.createElement('div');
+        bank.className = 'chips-container';
+        bank.id = 'sb-bank-' + idx;
+
+        var row = document.createElement('div');
+        row.className = 'sentence-builder';
+        row.id = 'sb-row-' + idx;
+
+        var fb = document.createElement('div');
+        fb.className = 'satzbau-feedback';
+        fb.id = 'sb-fb-' + idx;
+
+        var parts = ex.parts.slice();
+        for (var i = parts.length - 1; i > 0; i--) {
+            var j = Math.floor(Math.random() * (i + 1));
+            var tmp = parts[i]; parts[i] = parts[j]; parts[j] = tmp;
+        }
+        parts.forEach(function(word) { bank.appendChild(sbMakeChip(word)); });
+
+        sbRegisterZone(bank, idx);
+        sbRegisterZone(row, idx);
+
+        var btnRow = document.createElement('div');
+        btnRow.style.cssText = 'display:flex; gap:8px; margin-top:6px;';
+
+        var solveBtn = document.createElement('button');
+        solveBtn.className = 'btn';
+        solveBtn.textContent = 'Lösen';
+        solveBtn.setAttribute('data-idx', idx);
+        solveBtn.addEventListener('click', function() {
+            sbShowSolution(parseInt(this.getAttribute('data-idx')));
+        });
+
+        var resetBtn = document.createElement('button');
+        resetBtn.className = 'btn';
+        resetBtn.textContent = '↺ Neustart';
+        resetBtn.setAttribute('data-idx', idx);
+        resetBtn.addEventListener('click', function() {
+            sbResetOne(parseInt(this.getAttribute('data-idx')));
+        });
+
+        btnRow.appendChild(solveBtn);
+        btnRow.appendChild(resetBtn);
+
+        item.appendChild(bank);
+        item.appendChild(row);
+        item.appendChild(fb);
+        item.appendChild(btnRow);
+        container.appendChild(item);
+    });
+}
+
+function showAllSolutions() {
+    for (var i = 0; i < satzbauData.length; i++) {
+        sbShowSolution(i);
+    }
+}
+
+function resetSatzbau() {
+    initSatzbau();
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// MAIN SECTION SWITCHING
+// ─────────────────────────────────────────────────────────────────────────────
+
+function showSection(idx) {
+    document.querySelectorAll('.section').forEach(function(s, i) {
+        s.classList.toggle('active', i === idx);
+    });
+    document.querySelectorAll('.nav-btn').forEach(function(b, i) {
+        b.classList.toggle('active', i === idx);
+    });
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// INITIALIZATION ON LOAD
+// ─────────────────────────────────────────────────────────────────────────────
+
+window.addEventListener('DOMContentLoaded', function() {
+    loadBestTimes();
+    initVorentlastung();
+    initGenus();
+    initLuecken();
+    initMC();
+    initSatzbau();
+});
+</script>
+
+</body>
+</html>
