@@ -91,7 +91,7 @@ body {
 .nav-emoji { font-size: 1.3em; line-height: 1.2; }
 .nav-label { font-size: 0.78em; margin-top: 2px; line-height: 1.2; }
 
-.section { display: none; }
+.section { display: none; padding: 28px 30px; }
 .section.active { display: block; }
 
 .tab-banner {
@@ -655,39 +655,48 @@ body {
     background: #d4edda;
     border-color: #28a745;
     cursor: default;
+    opacity: 0.7;
+    pointer-events: none;
 }
 
 .match-card.error {
-    animation: shake 0.3s;
-    background: #f8d7da;
-    border-color: #dc3545;
+    animation: shake 0.4s;
+    background: #f8d7da !important;
+    border-color: #dc3545 !important;
 }
 
 @keyframes shake {
     0%, 100% { transform: translateX(0); }
-    25% { transform: translateX(-5px); }
-    75% { transform: translateX(5px); }
+    20% { transform: translateX(-6px); }
+    40% { transform: translateX(6px); }
+    60% { transform: translateX(-4px); }
+    80% { transform: translateX(4px); }
 }
 
-#matchFeedback {
-    padding: 15px;
-    border-radius: 8px;
+.match-score {
     text-align: center;
-    display: none;
+    font-size: 1.1em;
+    font-weight: 600;
+    color: #555;
+    margin-top: 20px;
+    padding: 12px;
+    background: #f0f4ff;
+    border-radius: 8px;
 }
 
-#matchFeedback.success {
+.match-score.complete {
     background: #d4edda;
     color: #155724;
-    border: 1px solid #c3e6cb;
-    display: block;
 }
 
-#matchFeedback.error {
-    background: #f8d7da;
-    color: #721c24;
-    border: 1px solid #f5c6cb;
-    display: block;
+.match-reset-link {
+    display: inline-block;
+    margin-top: 10px;
+    color: #667eea;
+    text-decoration: underline;
+    cursor: pointer;
+    font-size: 0.95em;
+    font-weight: 400;
 }
 
 @media (max-width: 768px) {
@@ -954,7 +963,7 @@ body {
     <!-- TAB 6: ZUORDNUNG -->
     <div class="section" id="sec-6">
         <h2>Zuordnungsübung: Fachbegriffe → Beschreibungen</h2>
-        <p style="margin-bottom:20px;color:#666;">Ordnen Sie die Fachbegriffe der Architektur ihren Beschreibungen zu.</p>
+        <p style="margin-bottom:20px;color:#666;">Klicken Sie zuerst auf einen Fachbegriff links, dann auf die passende Beschreibung rechts. Richtige Zuordnungen werden sofort grün markiert.</p>
 
         <div class="match-exercise" id="matchExercise">
             <div class="match-left">
@@ -967,11 +976,7 @@ body {
             </div>
         </div>
 
-        <div style="margin-top:30px;text-align:center;">
-            <button onclick="checkMatches()" style="padding:12px 30px;background:#667eea;color:white;border:none;border-radius:8px;cursor:pointer;font-size:1em;">Lösungen prüfen</button>
-            <button onclick="resetMatches()" style="margin-left:10px;padding:12px 30px;background:#999;color:white;border:none;border-radius:8px;cursor:pointer;font-size:1em;">Neu starten</button>
-            <div id="matchFeedback" style="margin-top:15px;font-weight:600;"></div>
-        </div>
+        <div id="matchScore" class="match-score" style="display:none;"></div>
     </div>
 
     <div class="section" id="sec-7">
@@ -1201,7 +1206,7 @@ function initVorentlastung() {
 }
 
 function initTab6() {
-    setTimeout(initMatching, 100);
+    initMatching();
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -1911,50 +1916,76 @@ window.addEventListener('DOMContentLoaded', function() {
     initMatching();
 });
 
-// Matching Exercise Data (Tab 6)
+// Matching Exercise Data (Tab 6) — 10 Paare
 var MATCHING_DATA_TAB6 = [
     {term: 'offene Bauweise', desc: 'Einzelstehende Gebäude mit Abstand zueinander'},
     {term: 'geschlossene Bauweise', desc: 'Gebäude bilden eine durchgehende Häuserzeile'},
     {term: 'Zeilenbauweise', desc: 'Langgestreckte Bauten parallel zueinander angeordnet'},
     {term: 'Blockbauweise', desc: 'Geschlossener Block um einen Innenhof'},
     {term: 'Dachkonstruktion', desc: 'Tragwerk aus Sparren, Pfetten und Stuhlsäulen'},
-    {term: 'Baukörpergruppierung', desc: 'Verschiedene Formen der Gebäudemassenverteilung'}
+    {term: 'Baukörpergruppierung', desc: 'Verschiedene Formen der Gebäudemassenverteilung'},
+    {term: 'Rohbau', desc: 'Errichtung der tragenden Struktur ohne Innenausbau'},
+    {term: 'Sanierung', desc: 'Umfassende Erneuerung eines bestehenden Gebäudes'},
+    {term: 'Mischnutzung', desc: 'Kombination von Wohnen und Gewerbe in einem Gebäude'},
+    {term: 'Baugenehmigung', desc: 'Behördliche Erlaubnis zur Durchführung eines Bauvorhabens'}
 ];
 
 var matchState = {
     selectedTerm: null,
-    matches: {},
-    data: MATCHING_DATA_TAB6.slice()
+    correctCount: 0,
+    total: MATCHING_DATA_TAB6.length
 };
 
+// Fisher-Yates shuffle — korrekt und gleichverteilt
+function shuffleArray(arr) {
+    var a = arr.slice();
+    for (var i = a.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var tmp = a[i]; a[i] = a[j]; a[j] = tmp;
+    }
+    return a;
+}
+
 function initMatching() {
-    matchState.matches = {};
     matchState.selectedTerm = null;
+    matchState.correctCount = 0;
 
     var termsDiv = document.getElementById('matchTerms');
     var descsDiv = document.getElementById('matchDescriptions');
+    var scoreDiv = document.getElementById('matchScore');
 
     if (!termsDiv || !descsDiv) return;
 
     termsDiv.innerHTML = '';
     descsDiv.innerHTML = '';
+    if (scoreDiv) { scoreDiv.style.display = 'none'; scoreDiv.className = 'match-score'; scoreDiv.innerHTML = ''; }
 
-    // Shuffle descriptions
-    var shuffledDescs = matchState.data.slice().sort(function() { return Math.random() - 0.5; });
+    // Shuffle both sides independently
+    var shuffledTerms = shuffleArray(MATCHING_DATA_TAB6);
+    var shuffledDescs = shuffleArray(MATCHING_DATA_TAB6);
+
+    // Ensure no description is directly opposite its matching term
+    for (var attempts = 0; attempts < 50; attempts++) {
+        var conflict = false;
+        for (var i = 0; i < shuffledTerms.length; i++) {
+            if (shuffledTerms[i].term === shuffledDescs[i].term) { conflict = true; break; }
+        }
+        if (!conflict) break;
+        shuffledDescs = shuffleArray(MATCHING_DATA_TAB6);
+    }
 
     // Create term cards
-    matchState.data.forEach(function(item, idx) {
+    shuffledTerms.forEach(function(item) {
         var card = document.createElement('div');
         card.className = 'match-card';
         card.textContent = item.term;
         card.dataset.term = item.term;
-        card.dataset.idx = idx;
         card.onclick = function() { selectTermCard(this); };
         termsDiv.appendChild(card);
     });
 
-    // Create description cards (shuffled)
-    shuffledDescs.forEach(function(item, idx) {
+    // Create description cards
+    shuffledDescs.forEach(function(item) {
         var card = document.createElement('div');
         card.className = 'match-card';
         card.textContent = item.desc;
@@ -1975,49 +2006,45 @@ function selectTermCard(el) {
 }
 
 function matchDescCard(el) {
-    if (!matchState.selectedTerm) {
-        alert('Bitte wählen Sie zuerst einen Fachbegriff auf der linken Seite aus.');
-        return;
-    }
+    if (el.classList.contains('matched')) return;
 
-    var termCard = document.querySelector('.match-terms .match-card[data-term="' + matchState.selectedTerm + '"]');
+    if (!matchState.selectedTerm) return;
+
+    var termCard = document.querySelector('.match-terms .match-card.selected');
+    if (!termCard) return;
 
     if (el.dataset.term === matchState.selectedTerm) {
-        // Correct match
+        // RICHTIG — sofort grün
         el.classList.add('matched');
-        el.style.cursor = 'default';
         termCard.classList.add('matched');
-        termCard.style.cursor = 'default';
         termCard.classList.remove('selected');
-        matchState.matches[matchState.selectedTerm] = true;
+        matchState.correctCount++;
         matchState.selectedTerm = null;
+
+        // Score aktualisieren
+        updateMatchScore();
     } else {
-        // Wrong match
+        // FALSCH — sofort rot + shake
         el.classList.add('error');
-        setTimeout(function() { el.classList.remove('error'); }, 300);
+        termCard.classList.add('error');
+        setTimeout(function() {
+            el.classList.remove('error');
+            termCard.classList.remove('error');
+        }, 500);
     }
 }
 
-function checkMatches() {
-    var correctCount = Object.keys(matchState.matches).length;
-    var feedback = document.getElementById('matchFeedback');
+function updateMatchScore() {
+    var scoreDiv = document.getElementById('matchScore');
+    if (!scoreDiv) return;
 
-    if (correctCount === matchState.data.length) {
-        feedback.textContent = '✅ Perfekt! Alle Zuordnungen sind korrekt!';
-        feedback.classList.remove('error');
-        feedback.classList.add('success');
-    } else {
-        feedback.textContent = '⚠️ Sie haben ' + correctCount + ' von ' + matchState.data.length + ' Zuordnungen korrekt. Versuchen Sie es nochmal!';
-        feedback.classList.remove('success');
-        feedback.classList.add('error');
+    scoreDiv.style.display = 'block';
+    scoreDiv.textContent = matchState.correctCount + ' von ' + matchState.total + ' richtig zugeordnet';
+
+    if (matchState.correctCount === matchState.total) {
+        scoreDiv.classList.add('complete');
+        scoreDiv.innerHTML = '✅ Perfekt! Alle ' + matchState.total + ' Zuordnungen sind korrekt!<br><a class="match-reset-link" onclick="initMatching()">Nochmal spielen</a>';
     }
-}
-
-function resetMatches() {
-    initMatching();
-    var feedback = document.getElementById('matchFeedback');
-    feedback.textContent = '';
-    feedback.classList.remove('success', 'error');
 }
 
 // Glossary search (Tab 7)
