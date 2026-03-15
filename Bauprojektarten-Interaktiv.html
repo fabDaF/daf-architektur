@@ -1257,11 +1257,22 @@ function initVorentlastung() {
 
             baseHtml += '<div class="koepf-source">Quelle: Koepf/Binding, Bildwörterbuch der Architektur, 2005</div>';
             baseHtml += '</div>';
-            baseHtml += '<a href="#" onclick="event.preventDefault(); document.getElementById(\'' + detailId + '\').classList.toggle(\'active\'); return false;" style="display:block;margin-top:8px;color:#667eea;font-size:0.9em;text-decoration:underline;">Koepf-Definition anzeigen</a>';
+            baseHtml += '<a href="#" class="koepf-toggle" data-target="' + detailId + '" style="display:block;margin-top:8px;color:#667eea;font-size:0.9em;text-decoration:underline;cursor:pointer;">Koepf-Definition anzeigen</a>';
         }
 
         card.innerHTML = baseHtml;
         grid.appendChild(card);
+    });
+
+    // Delegated click handler for Koepf-Definition toggles
+    grid.addEventListener('click', function(e) {
+        var toggle = e.target.closest('.koepf-toggle');
+        if (toggle) {
+            e.preventDefault();
+            var targetId = toggle.getAttribute('data-target');
+            var detail = document.getElementById(targetId);
+            if (detail) detail.classList.toggle('active');
+        }
     });
 }
 
