@@ -1542,16 +1542,17 @@ function resetMC() {
 // ─────────────────────────────────────────────────────────────────────────────
 
 var satzbauData = [
-    { parts: ['der', 'Hochbau', 'umfasst', 'alle', 'Bauwerke', ',', 'die', 'oberhalb', 'der', 'Geländeoberfläche', 'errichtet', 'werden'], valid: [['der', 'Hochbau', 'umfasst', 'alle', 'Bauwerke', ',', 'die', 'oberhalb', 'der', 'Geländeoberfläche', 'errichtet', 'werden']], punct: '.' },
-    { parts: ['zum', 'Wohnungsbau', 'gehören', 'Einfamilienhäuser', ',', 'Mehrfamilienhäuser', 'und', 'auch', 'Luxuswohnungen', 'im', 'gehobenen', 'Segment'], valid: [['zum', 'Wohnungsbau', 'gehören', 'Einfamilienhäuser', ',', 'Mehrfamilienhäuser', 'und', 'auch', 'Luxuswohnungen', 'im', 'gehobenen', 'Segment']], punct: '.' },
-    { parts: ['wenn', 'der', 'Rohbau', 'steht', ',', 'beginnen', 'die', 'Arbeiten', 'am', 'Innenausbau', 'und', 'an', 'der', 'Fassade'], valid: [['wenn', 'der', 'Rohbau', 'steht', ',', 'beginnen', 'die', 'Arbeiten', 'am', 'Innenausbau', 'und', 'an', 'der', 'Fassade']], punct: '.' },
-    { parts: ['beim', 'Innenausbau', 'arbeiten', 'viele', 'verschiedene', 'Gewerke', ',', 'die', 'gut', 'koordiniert', 'werden', 'müssen'], valid: [['beim', 'Innenausbau', 'arbeiten', 'viele', 'verschiedene', 'Gewerke', ',', 'die', 'gut', 'koordiniert', 'werden', 'müssen']], punct: '.' },
-    { parts: ['eine', 'Sanierung', 'ist', 'deutlich', 'umfangreicher', 'als', 'eine', 'Renovierung', ',', 'weil', 'auch', 'die', 'Bausubstanz', 'erneuert', 'wird'], valid: [['eine', 'Sanierung', 'ist', 'deutlich', 'umfangreicher', 'als', 'eine', 'Renovierung', ',', 'weil', 'auch', 'die', 'Bausubstanz', 'erneuert', 'wird']], punct: '.' },
-    { parts: ['bei', 'Luxuswohnungen', 'sind', 'die', 'Ansprüche', 'an', 'den', 'Innenausbau', 'besonders', 'hoch', ',', 'zum', 'Beispiel', 'bei', 'Böden', 'und', 'Sanitär'], valid: [['bei', 'Luxuswohnungen', 'sind', 'die', 'Ansprüche', 'an', 'den', 'Innenausbau', 'besonders', 'hoch', ',', 'zum', 'Beispiel', 'bei', 'Böden', 'und', 'Sanitär']], punct: '.' },
-    { parts: ['bevor', 'der', 'Bau', 'beginnt', ',', 'muss', 'die', 'Baugenehmigung', 'von', 'der', 'Behörde', 'vorliegen'], valid: [['bevor', 'der', 'Bau', 'beginnt', ',', 'muss', 'die', 'Baugenehmigung', 'von', 'der', 'Behörde', 'vorliegen']], punct: '.' },
-    { parts: ['der', 'Bauherr', 'entscheidet', ',', 'ob', 'eine', 'Modernisierung', 'oder', 'ein', 'kompletter', 'Neubau', 'sinnvoller', 'ist'], valid: [['der', 'Bauherr', 'entscheidet', ',', 'ob', 'eine', 'Modernisierung', 'oder', 'ein', 'kompletter', 'Neubau', 'sinnvoller', 'ist']], punct: '.' },
-    { parts: ['in', 'Hamburg', 'gibt', 'es', 'viele', 'historische', 'Gebäude', ',', 'die', 'denkmalgerecht', 'saniert', 'werden', 'müssen'], valid: [['in', 'Hamburg', 'gibt', 'es', 'viele', 'historische', 'Gebäude', ',', 'die', 'denkmalgerecht', 'saniert', 'werden', 'müssen']], punct: '.' },
-    { parts: ['zum', 'Tiefbau', 'gehören', 'unter', 'anderem', 'Fundamente', ',', 'Kanäle', 'und', 'Straßen', 'unterhalb', 'der', 'Geländeoberfläche'], valid: [['zum', 'Tiefbau', 'gehören', 'unter', 'anderem', 'Fundamente', ',', 'Kanäle', 'und', 'Straßen', 'unterhalb', 'der', 'Geländeoberfläche']], punct: '.' }
+    // 8–12 Chips je Satz (Frank: max. 12, besser 6–10)
+    { parts: ['der', 'Hochbau', 'umfasst', 'alle', 'Bauwerke', 'oberhalb', 'der', 'Geländeebene'], valid: [['der', 'Hochbau', 'umfasst', 'alle', 'Bauwerke', 'oberhalb', 'der', 'Geländeebene']], punct: '.' },
+    { parts: ['zum', 'Wohnungsbau', 'gehören', 'Einfamilienhäuser', 'und', 'Mehrfamilienhäuser'], valid: [['zum', 'Wohnungsbau', 'gehören', 'Einfamilienhäuser', 'und', 'Mehrfamilienhäuser']], punct: '.' },
+    { parts: ['nach', 'dem', 'Rohbau', 'beginnen', 'die', 'Arbeiten', 'am', 'Innenausbau'], valid: [['nach', 'dem', 'Rohbau', 'beginnen', 'die', 'Arbeiten', 'am', 'Innenausbau']], punct: '.' },
+    { parts: ['beim', 'Innenausbau', 'müssen', 'viele', 'Gewerke', 'gut', 'koordiniert', 'werden'], valid: [['beim', 'Innenausbau', 'müssen', 'viele', 'Gewerke', 'gut', 'koordiniert', 'werden']], punct: '.' },
+    { parts: ['eine', 'Sanierung', 'ist', 'umfangreicher', 'als', 'eine', 'Renovierung'], valid: [['eine', 'Sanierung', 'ist', 'umfangreicher', 'als', 'eine', 'Renovierung']], punct: '.' },
+    { parts: ['der', 'Bauherr', 'entscheidet', 'sich', 'für', 'Neubau', 'oder', 'Sanierung'], valid: [['der', 'Bauherr', 'entscheidet', 'sich', 'für', 'Neubau', 'oder', 'Sanierung']], punct: '.' },
+    { parts: ['die', 'Baugenehmigung', 'muss', 'vor', 'dem', 'Baubeginn', 'vorliegen'], valid: [['die', 'Baugenehmigung', 'muss', 'vor', 'dem', 'Baubeginn', 'vorliegen']], punct: '.' },
+    { parts: ['historische', 'Gebäude', 'werden', 'oft', 'denkmalgerecht', 'saniert'], valid: [['historische', 'Gebäude', 'werden', 'oft', 'denkmalgerecht', 'saniert']], punct: '.' },
+    { parts: ['eine', 'Aufstockung', 'vergrößert', 'das', 'Gebäude', 'in', 'vertikaler', 'Richtung'], valid: [['eine', 'Aufstockung', 'vergrößert', 'das', 'Gebäude', 'in', 'vertikaler', 'Richtung']], punct: '.' },
+    { parts: ['zum', 'Tiefbau', 'gehören', 'Fundamente', ',', 'Kanäle', 'und', 'Straßen'], valid: [['zum', 'Tiefbau', 'gehören', 'Fundamente', ',', 'Kanäle', 'und', 'Straßen']], punct: '.' }
 ];
 
 var sbDragged = null;
