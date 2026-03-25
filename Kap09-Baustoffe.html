@@ -145,6 +145,7 @@ body {
 .vocab-card .term { font-weight: 700; color: #667eea; font-size: 1.05em; }
 .vocab-card .en { font-weight: 600; color: #764ba2; font-size: 0.9em; }
 .vocab-card .def { font-size: 0.85em; color: #555; line-height: 1.5; font-style: italic; }
+.vocab-card .kb-langs { font-size: 0.75em; color: #999; margin-top: 5px; border-top: 1px solid #e8ecff; padding-top: 5px; font-style: normal; }
 
 /* ─── Story Text (Lesetext) ─── */
 .story-text {
@@ -459,7 +460,7 @@ body {
              alt="Baustoffe: Beton, Stahl und Holz auf einer Baustelle">
         <div class="sec-inner">
             <h2 class="tab-title">Schlüsselvokabular: Baustoffe</h2>
-            <p class="tab-subtitle">Lerne diese Fachbegriffe, bevor du den Text liest.</p>
+            <p class="tab-subtitle">Lerne diese Fachbegriffe, bevor du den Text liest. Definitionen: Friedrich/Heidenreich (2021) + Koepf/Binding, <em>Bildwörterbuch der Architektur</em> (2005).</p>
             <div class="vocab-grid" id="vocabGrid"></div>
         </div>
     </div>
@@ -690,18 +691,41 @@ function showSection(idx) {
 // TAB 0: VORENTLASTUNG
 // ═════════════════════════════════════════════════════════════════
 var VOCAB = [
-    { term: 'der Baustoff, -e', en: 'building material', def: 'Jedes Material, das beim Bauen verwendet wird — z.B. Beton, Stahl, Holz.' },
-    { term: 'der Beton, -e', en: 'concrete', def: 'Gemisch aus Zement, Wasser und Zuschlägen — sehr druckfest.' },
-    { term: 'der Stahl (kein Pl.)', en: 'steel', def: 'Metalllegierung aus Eisen — sowohl zug- als auch druckfest.' },
-    { term: 'das Mauerwerk (kein Pl.)', en: 'masonry / brickwork', def: 'Gefügte Konstruktion aus Steinen und Mörtel — druckfest, nicht biegefest.' },
-    { term: 'das Holz, -¨er', en: 'timber / wood', def: 'Organischer, nachwachsender Baustoff — leicht und tragfähig.' },
-    { term: 'der Stahlbeton (kein Pl.)', en: 'reinforced concrete', def: 'Verbundstoff aus Beton und Stahlbewehrung — druck- und zugfest.' },
-    { term: 'der Zement, -e', en: 'cement', def: 'Hydraulisches Bindemittel — erhärtet durch Reaktion mit Wasser (Hydratation).' },
-    { term: 'das Bindemittel, -', en: 'binder / binding agent', def: 'Stoff, der andere Materialien zusammenhält und nach Erhärten fest wird.' },
-    { term: 'die Druckfestigkeit (kein Pl.)', en: 'compressive strength', def: 'Fähigkeit eines Materials, Druckkräfte aufzunehmen, ohne zu versagen.' },
-    { term: 'die Zugfestigkeit (kein Pl.)', en: 'tensile strength', def: 'Fähigkeit eines Materials, Zugkräfte aufzunehmen, ohne zu reißen.' },
-    { term: 'die Bewehrung, -en', en: 'reinforcement', def: 'Stahlstäbe oder -matten im Beton — nehmen Zugkräfte auf.' },
-    { term: 'der Zuschlag, -¨e', en: 'aggregate', def: 'Körniges Material (Sand, Kies, Schotter) als Hauptbestandteil von Beton.' }
+    { term: 'der Baustoff, -e', en: 'building material',
+      def: 'Jedes natürliche oder künstliche Material, das beim Bauen verwendet wird — z.B. Beton, Stahl, Holz, Ziegel.' },
+    { term: 'der Beton, -e', en: 'concrete',
+      def: 'Gussmauerwerk, das bereits den Römern bekannt war (opus caementitium). Besteht aus festen Zuschlagstoffen und einem Bindemittel (Zement); wird auf einer Schalung gegossen.',
+      langs: '🇬🇧 concrete · 🇫🇷 béton · 🇮🇹 calcestruzzo · 🇪🇸 hormigón' },
+    { term: 'der Stahl (kein Pl.)', en: 'steel',
+      def: 'Metalllegierung aus Eisen mit geringem Kohlenstoffgehalt — hohe Zug- und Druckfestigkeit; unverzichtbar als Bewehrung und Tragkonstruktion.',
+      langs: '🇬🇧 steel · 🇫🇷 acier · 🇮🇹 acciaio · 🇪🇸 acero' },
+    { term: 'das Mauerwerk (kein Pl.)', en: 'masonry / brickwork',
+      def: 'Aus einzelnen Steinen (Ziegel, Natur- oder Kunststein) und Mörtel gefügte Konstruktion. Druckfest, aber nicht biegefest.',
+      langs: '🇬🇧 masonry · 🇫🇷 maçonnerie · 🇮🇹 muratura · 🇪🇸 mampostería' },
+    { term: 'das Holz, -¨er', en: 'timber / wood',
+      def: 'Organischer, nachwachsender Baustoff — leicht, gut wärmedämmend und tragfähig. Im Holzbau als Balken, Stütze und Platte eingesetzt.',
+      langs: '🇬🇧 timber, wood · 🇫🇷 bois · 🇮🇹 legno · 🇪🇸 madera' },
+    { term: 'der Stahlbeton (kein Pl.)', en: 'reinforced concrete',
+      def: 'Verbundbaustoff, bei dem Betonstahlstäbe in den Beton eingebettet werden: Beton nimmt Druckkräfte auf, Stahl die Zugkräfte.',
+      langs: '🇬🇧 reinforced concrete · 🇫🇷 béton armé · 🇮🇹 cemento armato · 🇪🇸 hormigón armado' },
+    { term: 'der Zement, -e', en: 'cement',
+      def: 'Hydraulisches Bindemittel aus gebranntem Kalkstein und Ton. Erhärtet durch Reaktion mit Wasser (Hydratation) und bindet die Betonbestandteile zusammen.',
+      langs: '🇬🇧 cement · 🇫🇷 ciment · 🇮🇹 cemento · 🇪🇸 cemento' },
+    { term: 'das Bindemittel, -', en: 'binder / binding agent',
+      def: 'Stoff, der körnige Zuschläge zusammenhält und nach dem Erhärten eine feste Masse bildet. In der Antike: Kalk und hydraulische Bindemittel.',
+      langs: '🇬🇧 binder, binding agent · 🇫🇷 liant · 🇮🇹 legante · 🇪🇸 ligante' },
+    { term: 'die Druckfestigkeit (kein Pl.)', en: 'compressive strength',
+      def: 'Fähigkeit eines Materials, Druckkräfte aufzunehmen, ohne zu versagen. Beton hat hohe Druckfestigkeit — daher sein Einsatz in Stützen und Fundamenten.',
+      langs: '🇬🇧 compressive strength · 🇫🇷 résistance à la compression · 🇮🇹 resistenza a compressione · 🇪🇸 resistencia a compresión' },
+    { term: 'die Zugfestigkeit (kein Pl.)', en: 'tensile strength',
+      def: 'Fähigkeit eines Materials, Zugkräfte aufzunehmen, ohne zu reißen. Stahl hat sehr hohe Zugfestigkeit — Beton dagegen kaum.',
+      langs: '🇬🇧 tensile strength · 🇫🇷 résistance à la traction · 🇮🇹 resistenza a trazione · 🇪🇸 resistencia a tracción' },
+    { term: 'die Bewehrung, -en', en: 'reinforcement',
+      def: 'Die Armierung des Stahlbetons durch Eiseneinlagen. Schlaffe Bewehrung beim Biegemoment, vorgespannte Bewehrung beim Spannbeton, Druckbewehrung bei Stützen.',
+      langs: '🇬🇧 reinforcement · 🇫🇷 armature, ferraillage · 🇮🇹 armatura · 🇪🇸 armadura metálica' },
+    { term: 'der Zuschlag, -¨e', en: 'aggregate',
+      def: 'Körniges inertes Material (Sand, Kies, Splitt, Schotter), das den Hauptanteil des Betons bildet und in den Zementleim eingebettet wird.',
+      langs: '🇬🇧 aggregate · 🇫🇷 granulat · 🇮🇹 aggregato · 🇪🇸 árido, agregado' }
 ];
 
 function initVocab() {
@@ -709,9 +733,13 @@ function initVocab() {
     VOCAB.forEach(function(v) {
         var card = document.createElement('div');
         card.className = 'vocab-card';
-        card.innerHTML = '<div class="term">' + v.term + '</div>'
+        var html = '<div class="term">' + v.term + '</div>'
             + '<div class="en">🇬🇧 ' + v.en + '</div>'
             + '<div class="def">' + v.def + '</div>';
+        if (v.langs) {
+            html += '<div class="kb-langs">📚 ' + v.langs + '</div>';
+        }
+        card.innerHTML = html;
         grid.appendChild(card);
     });
 }
