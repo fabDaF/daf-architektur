@@ -1,0 +1,1139 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Haustechnik – Interaktive DaF-Übung · Kapitel 10</title>
+    <style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+}
+
+/* ─── Header ─── */
+.header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 30px;
+    text-align: center;
+}
+.header h1 { font-size: 2.2em; font-family: Georgia, 'Times New Roman', serif; color: white; margin-bottom: 8px; border: none; padding: 0; }
+.header .subtitle, .header p { font-size: 1.0em; font-family: Georgia, 'Times New Roman', serif; opacity: 0.95; color: rgba(255,255,255,0.9); margin: 0; }
+.header .big-emoji { font-size: 2.6em; display: block; margin-top: 8px; }
+
+/* ─── Nav ─── */
+.nav {
+    display: flex;
+    flex-wrap: nowrap;
+    background: #f8f9fa;
+    border-top: 1px solid #ddd;
+    border-left: 1px solid #ddd;
+    border-right: 1px solid #ddd;
+}
+.nav-btn {
+    flex: 1;
+    padding: 14px 10px;
+    text-align: center;
+    cursor: pointer;
+    border-right: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+    transition: all 0.3s;
+    font-size: 0.92em;
+    font-weight: 500;
+    color: #666;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+.nav-btn:last-child { border-right: none; }
+.nav-btn:hover { background: #e8ecff; color: #667eea; }
+.nav-btn.active { background: white; color: #667eea; font-weight: 700; border-bottom: 3px solid #667eea; }
+.nav-emoji { font-size: 1.3em; line-height: 1.2; }
+.nav-label { font-size: 0.78em; margin-top: 2px; line-height: 1.2; }
+
+/* ─── Sections ─── */
+.section { display: none; }
+.section.active { display: block; }
+.sec-inner { padding: 28px 30px; }
+
+/* ─── Tab-Banner ─── */
+.tab-banner {
+    width: 100%;
+    max-height: 180px;
+    object-fit: cover;
+    border-radius: 0;
+    margin-bottom: 0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+    display: block;
+}
+@media (max-width: 600px) { .tab-banner { max-height: 120px; } }
+
+/* ─── Control Bar ─── */
+.control-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 18px;
+    padding: 6px 12px;
+    background: #f8f9fa;
+    border-radius: 8px;
+}
+.btn-row { display: flex; gap: 6px; }
+.btn {
+    background: none;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 4px 12px;
+    font-size: 0.82em;
+    color: #888;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-weight: 500;
+}
+.btn:hover { border-color: #667eea; color: #667eea; }
+.timer-display {
+    display: flex;
+    gap: 14px;
+    font-size: 0.82em;
+    color: #bbb;
+    font-variant-numeric: tabular-nums;
+}
+
+/* ─── Section Titles ─── */
+.tab-title { font-size: 1.2em; color: #333; margin-bottom: 6px; font-weight: 700; }
+.tab-subtitle { font-size: 0.92em; color: #777; margin-bottom: 20px; }
+.hilfe-box {
+    background: #f0f4ff;
+    border-left: 4px solid #667eea;
+    border-radius: 0 8px 8px 0;
+    padding: 14px 18px;
+    margin-bottom: 22px;
+    font-size: 0.9em;
+    color: #444;
+    line-height: 1.6;
+}
+
+/* ─── Vocab Cards (Vorentlastung) ─── */
+.vocab-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 14px;
+    margin-bottom: 20px;
+}
+.vocab-card {
+    background: #f8f9ff;
+    border: 2px solid #667eea;
+    border-radius: 10px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.vocab-card .term { font-weight: 700; color: #667eea; font-size: 1.05em; }
+.vocab-card .en { font-weight: 600; color: #764ba2; font-size: 0.9em; }
+.vocab-card .def { font-size: 0.85em; color: #555; line-height: 1.5; font-style: italic; }
+.vocab-card .kb-langs { font-size: 0.75em; color: #999; margin-top: 5px; border-top: 1px solid #e8ecff; padding-top: 5px; font-style: normal; }
+
+/* ─── Story Text (Lesetext) ─── */
+.story-text {
+    font-family: Georgia, 'Times New Roman', serif;
+    max-width: 620px;
+    margin: 0 auto 20px auto;
+    text-align: justify;
+    line-height: 1.8;
+    font-size: 1.0em;
+    color: #333;
+    hyphens: auto;
+}
+.story-text p { margin-bottom: 1em; text-indent: 1.2em; }
+.story-text p:first-child { text-indent: 0; }
+.story-text h3 { font-size: 1em; color: #667eea; margin: 18px 0 6px 0; font-family: 'Segoe UI', sans-serif; }
+.story-source { font-size: 0.8em; color: #aaa; font-style: italic; margin-top: 16px; text-align: center; }
+.vocab-hl { background: #ffe9a0; border-radius: 3px; padding: 1px 3px; font-weight: 600; cursor: help; }
+.grammar-box {
+    background: #f0f8f0;
+    border-left: 4px solid #27ae60;
+    border-radius: 0 8px 8px 0;
+    padding: 14px 18px;
+    margin: 20px 0;
+    font-size: 0.9em;
+    color: #333;
+    line-height: 1.7;
+}
+.grammar-box strong { color: #27ae60; }
+
+/* ─── Genus Exercise ─── */
+.genus-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 20px;
+    padding: 12px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    min-height: 48px;
+}
+.genus-chip {
+    padding: 6px 14px;
+    border-radius: 20px;
+    cursor: grab;
+    font-size: 0.9em;
+    font-weight: 600;
+    user-select: none;
+    border: 2px solid transparent;
+    transition: all 0.2s;
+}
+.genus-chip:active { cursor: grabbing; }
+.genus-chip.selected { border-color: #667eea; box-shadow: 0 0 0 3px rgba(102,126,234,0.25); }
+.genus-zones { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 12px; }
+.genus-zone {
+    border: 2px dashed #ccc;
+    border-radius: 10px;
+    padding: 14px;
+    min-height: 120px;
+    transition: all 0.2s;
+}
+.genus-zone.drag-over { border-color: #667eea; background: #f0f4ff; }
+.genus-zone-label { font-weight: 700; font-size: 1.1em; color: #667eea; margin-bottom: 10px; text-align: center; }
+.genus-chip.correct { background: #e8f8f0; border-color: #27ae60; color: #1a7a4a; }
+.genus-chip.wrong   { background: #fdeaea; border-color: #e74c3c; color: #c0392b; }
+
+/* ─── Lückentext ─── */
+.luecke-text { font-family: Georgia, serif; font-size: 1.0em; line-height: 2.0; color: #333; margin-bottom: 20px; }
+.luecke-text p { margin-bottom: 1em; }
+.luecke-input {
+    border: none;
+    border-bottom: 2px solid #667eea;
+    background: transparent;
+    font-family: Georgia, serif;
+    font-size: 1em;
+    outline: none;
+    padding: 0 4px;
+    margin: 0 2px;
+    transition: all 0.2s;
+}
+.luecke-input:focus { border-bottom-color: #764ba2; background: #f0f4ff; }
+.luecke-input.correct { border-bottom-color: #27ae60; background: #e8f8f0; }
+.luecke-input.wrong   { border-bottom-color: #e74c3c; background: #fdeaea; }
+.word-bank {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 12px;
+    background: #f0f4ff;
+    border-radius: 8px;
+    margin-bottom: 18px;
+}
+.word-chip {
+    padding: 4px 12px;
+    background: white;
+    border: 1px solid #667eea;
+    border-radius: 14px;
+    font-size: 0.85em;
+    color: #667eea;
+    font-weight: 600;
+    cursor: default;
+}
+
+/* ─── Zuordnung / Matching ─── */
+.match-container { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 20px; }
+.match-item {
+    padding: 10px 14px;
+    border-radius: 8px;
+    border: 2px solid #ddd;
+    cursor: pointer;
+    font-size: 0.9em;
+    line-height: 1.4;
+    transition: all 0.2s;
+    background: white;
+}
+.match-item:hover { border-color: #667eea; background: #f0f4ff; }
+.match-item.selected { border-color: #667eea; background: #e8ecff; }
+.match-item.correct { border-color: #27ae60; background: #e8f8f0; color: #1a7a4a; cursor: default; }
+.match-item.wrong   { border-color: #e74c3c; background: #fdeaea; color: #c0392b; }
+.match-col-label { font-weight: 700; color: #667eea; margin-bottom: 8px; font-size: 0.9em; }
+
+/* ─── Satzbau ─── */
+.sb-sentence { margin-bottom: 24px; }
+.sb-drop-zone {
+    min-height: 46px;
+    border: 2px dashed #667eea;
+    border-radius: 8px;
+    padding: 8px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+    margin-bottom: 8px;
+    background: #fafbff;
+    transition: background 0.2s;
+}
+.sb-drop-zone.drag-over { background: #e8ecff; }
+.sb-drop-zone.correct { border-color: #27ae60; background: #e8f8f0; }
+.sb-drop-zone.wrong   { border-color: #e74c3c; background: #fdeaea; }
+.sb-bank {
+    min-height: 46px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 8px;
+    background: #f0f4ff;
+    border-radius: 8px;
+    align-items: center;
+}
+.sb-chip {
+    padding: 5px 12px;
+    background: white;
+    border: 1.5px solid #667eea;
+    border-radius: 16px;
+    font-size: 0.9em;
+    cursor: grab;
+    user-select: none;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+.sb-chip:active { cursor: grabbing; }
+.sb-chip.dragging { opacity: 0.4; }
+.sb-punct { font-size: 1.1em; color: #27ae60; font-weight: 700; margin-left: 2px; display: none; }
+#sb-insert-cursor {
+    width: 2px;
+    height: 28px;
+    background: #667eea;
+    border-radius: 2px;
+    pointer-events: none;
+    display: none;
+}
+
+/* ─── Wortschatz-Tab ─── */
+.vocab-item { background: #f8f9ff; padding: 14px 18px; margin-bottom: 12px; border-radius: 10px; border-left: 4px solid #667eea; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.vocab-en { font-weight: 600; color: #764ba2; min-width: 180px; font-size: 0.95em; }
+.vocab-arrow { color: #ccc; font-size: 1.2em; }
+.vocab-inputs { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.vocab-inputs input { border: none; border-bottom: 2px solid #667eea; background: #fff; padding: 4px 8px; font-family: inherit; font-size: 0.95em; outline: none; transition: all 0.2s; }
+.vocab-inputs input:focus { border-bottom-color: #764ba2; background: #f0f7ff; }
+.vocab-inputs input.correct { border-bottom-color: #27ae60; background: #e8f8f0; }
+.vocab-inputs input.wrong   { border-bottom-color: #e74c3c; background: #fdeaea; }
+.vocab-inputs input.art   { width: 70px; }
+.vocab-inputs input.wort  { width: 190px; }
+.vocab-inputs input.plural { width: 200px; }
+.vocab-hint { color: #27ae60; font-weight: 600; font-size: 0.8em; margin-left: 6px; }
+
+/* ─── Footer ─── */
+.author-footer { text-align: center; margin-top: 40px; max-width: 1000px; margin-left: auto; margin-right: auto; padding: 16px; font-size: 0.8rem; color: #aaa; }
+.author-footer a { color: #aaa; }
+.author-name { font-weight: 700; }
+
+@media (max-width: 600px) {
+    body { padding: 8px; }
+    .nav { flex-wrap: wrap; }
+    .nav-btn { flex: 1 1 33%; min-width: 0; font-size: 0.8em; padding: 10px 6px; border-right: 1px solid #ddd; }
+    .nav-btn:last-child { border-right: 1px solid #ddd; }
+    .genus-zones { grid-template-columns: 1fr; }
+    .match-container { grid-template-columns: 1fr; }
+}
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>Haustechnik &amp; Nachhaltigkeit</h1>
+        <p style="font-family: Georgia, serif;">B1 – Kapitel 10 &nbsp;|&nbsp; TGA · GEG · Komposita</p>
+        <div class="big-emoji">⚙️</div>
+    </div>
+
+    <div class="nav">
+        <div class="nav-btn active" onclick="showSection(0)"><span class="nav-emoji">📋</span><span class="nav-label">Vorentlastung</span></div>
+        <div class="nav-btn" onclick="showSection(1)"><span class="nav-emoji">📖</span><span class="nav-label">Lesetext</span></div>
+        <div class="nav-btn" onclick="showSection(2)"><span class="nav-emoji">🏷️</span><span class="nav-label">Genus</span></div>
+        <div class="nav-btn" onclick="showSection(3)"><span class="nav-emoji">✏️</span><span class="nav-label">Lückentext</span></div>
+        <div class="nav-btn" onclick="showSection(4)"><span class="nav-emoji">🔀</span><span class="nav-label">Zuordnung</span></div>
+        <div class="nav-btn" onclick="showSection(5)"><span class="nav-emoji">🧩</span><span class="nav-label">Satzbau</span></div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         TAB 0: VORENTLASTUNG
+    ═══════════════════════════════════════════════════════════════ -->
+    <div class="section active" id="sec-0">
+        <img class="tab-banner"
+             src="https://images.pexels.com/photos/3862361/pexels-photo-3862361.jpeg?auto=compress&cs=tinysrgb&w=800"
+             alt="Nachhaltige Gebäudetechnik">
+        <div class="sec-inner">
+            <h2 class="tab-title">Schlüsselvokabular: Haustechnik</h2>
+            <p class="tab-subtitle">Lerne diese Fachbegriffe, bevor du den Text liest. Definitionen nach Friedrich/Heidenreich (2021).</p>
+            <div class="vocab-grid" id="vocabGrid"></div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         TAB 1: LESETEXT
+    ═══════════════════════════════════════════════════════════════ -->
+    <div class="section" id="sec-1">
+        <img class="tab-banner"
+             src="https://images.pexels.com/photos/1108117/pexels-photo-1108117.jpeg?auto=compress&cs=tinysrgb&w=800"
+             alt="Technische Gebäudeausrüstung">
+        <div class="sec-inner">
+            <h2 class="tab-title">Lesetext: Haustechnik im Überblick</h2>
+            <p class="tab-subtitle">Quelle: Friedrich / Heidenreich, <em>Deutsch für Architekten und Bauingenieure</em>, Springer Vieweg 2021, Kapitel 10</p>
+            <div class="story-text">
+
+                <h3>10.1 Was ist TGA?</h3>
+                <p>Die <span class="vocab-hl" title="building services">Haustechnik</span> — auch TGA (Technische Gebäudeausrüstung) genannt — umfasst alle technischen Anlagen, die ein Gebäude funktionsfähig und komfortabel machen. Dazu gehören vier Hauptbereiche: Heizung, <span class="vocab-hl" title="ventilation">Lüftung</span>, <span class="vocab-hl" title="sanitary installation">Sanitär</span> und Elektro. Diese vier Bereiche werden oft unter dem Begriff HLS+E zusammengefasst.</p>
+
+                <p>Die <span class="vocab-hl" title="heating system">Heizungsanlage</span> sorgt dafür, dass die Räume im Winter warm genug sind. Heute werden häufig <span class="vocab-hl" title="heat pump">Wärmepumpen</span> eingesetzt, die Energie aus der Außenluft, dem Erdreich oder dem Grundwasser gewinnen. Sie sind deutlich effizienter als ältere Gas- oder Ölheizungen. Die <span class="vocab-hl" title="ventilation system">Lüftungsanlage</span> sorgt für frische Luft in den Räumen und reguliert gleichzeitig Temperatur und Luftfeuchtigkeit. In modernen, gut gedämmten Gebäuden ist eine kontrollierte Lüftungsanlage unverzichtbar.</p>
+
+                <h3>10.2 Wärmedämmung und Energieeffizienz</h3>
+                <p>Ein wichtiger Faktor für den Energiebedarf eines Gebäudes ist die <span class="vocab-hl" title="thermal insulation">Wärmedämmung</span>. Eine gute Dämmung an Wänden, Dach und Boden reduziert die Wärmeverluste erheblich. Dadurch sinkt der Heizenergiebedarf und die Betriebskosten werden niedriger. Der <span class="vocab-hl" title="thermal protection">Wärmeschutz</span> ist in Deutschland gesetzlich geregelt: Jedes neue Gebäude muss bestimmte Mindestanforderungen erfüllen.</p>
+
+                <p>Zur Erzeugung von Strom werden heute zunehmend <span class="vocab-hl" title="photovoltaics">Photovoltaik</span>-Anlagen auf Dächern installiert. Solarzellen wandeln Sonnenlicht direkt in elektrische Energie um. In Verbindung mit einer Wärmepumpe und einem Stromspeicher kann ein Gebäude nahezu energieautark betrieben werden.</p>
+
+                <div class="grammar-box">
+                    <strong>📐 Grammatik: Komposita im Deutschen</strong><br>
+                    Deutsche Fachsprache verwendet viele <strong>Komposita</strong> — zusammengesetzte Wörter aus zwei oder mehr Teilen. Das <em>letzte</em> Wort bestimmt das Genus und die Bedeutungsgruppe:<br><br>
+                    <strong>Heizung + Anlage</strong> → <em>die</em> Heizungs<strong>anlage</strong> (Anlage = die)<br>
+                    <strong>Wärme + Dämmung</strong> → <em>die</em> Wärme<strong>dämmung</strong> (Dämmung = die)<br>
+                    <strong>Energie + Ausweis</strong> → <em>der</em> Energie<strong>ausweis</strong> (Ausweis = der)<br>
+                    <strong>Gebäude + Energie + Gesetz</strong> → <em>das</em> Gebäudeenergie<strong>gesetz</strong> (Gesetz = das)<br><br>
+                    💡 Tipp: Kennst du das letzte Wort, kennst du das Genus des Kompositums.
+                </div>
+
+                <h3>10.3 Das Gebäudeenergiegesetz (GEG)</h3>
+                <p>Seit dem Jahr 2020 regelt das <span class="vocab-hl" title="Building Energy Act">GEG</span> (Gebäudeenergiegesetz) die energetischen Anforderungen an Gebäude in Deutschland. Es fasst frühere Gesetze wie die EnEV und das EEWärmeG zusammen. Das GEG schreibt vor, wie viel Energie ein neues Gebäude maximal verbrauchen darf. Außerdem legt es fest, welcher Anteil des Energieverbrauchs aus erneuerbaren Energien stammen muss.</p>
+
+                <p>Der <span class="vocab-hl" title="energy performance certificate">Energieausweis</span> ist ein wichtiges Dokument: Er gibt an, wie energieeffizient ein Gebäude ist. Beim Verkauf oder bei der Vermietung eines Gebäudes ist er gesetzlich vorgeschrieben. <span class="vocab-hl" title="sustainability">Nachhaltigkeit</span> ist heute eines der wichtigsten Ziele in der Architektur — nicht nur für die Umwelt, sondern auch für die langfristigen Betriebskosten eines Gebäudes.</p>
+
+                <p class="story-source">Quelle: Friedrich / Heidenreich, Kapitel 10 · Springer Vieweg 2021</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         TAB 2: GENUS
+    ═══════════════════════════════════════════════════════════════ -->
+    <div class="section" id="sec-2">
+        <img class="tab-banner"
+             src="https://images.pexels.com/photos/257700/pexels-photo-257700.jpeg?auto=compress&cs=tinysrgb&w=800"
+             alt="Technische Planung">
+        <div class="sec-inner">
+            <div class="control-bar">
+                <div class="btn-row">
+                    <button class="btn" onclick="resetGenus(); resetTimer(2);">Neu starten</button>
+                </div>
+                <div class="timer-display">
+                    <span class="current-time">⏱ <span id="timer-2">00:00</span></span>
+                    <span class="best-time">🏆 <span id="best-2">--:--</span></span>
+                </div>
+            </div>
+            <h2 class="tab-title">Genus: der · die · das</h2>
+            <p class="tab-subtitle">Ziehe die Nomen in die richtige Artikel-Kategorie.</p>
+            <div class="hilfe-box">💡 Tipp: Bei Komposita bestimmt das <strong>letzte Wort</strong> das Genus — z.B. die Heizungs<em>anlage</em> (die Anlage).</div>
+            <div class="genus-chips" id="genusBank"></div>
+            <div class="genus-zones">
+                <div class="genus-zone" id="zone-der" ondragover="genusDragOver(event)" ondrop="genusDrop(event,'der')" onclick="genusZoneClick('der')">
+                    <div class="genus-zone-label">der</div>
+                </div>
+                <div class="genus-zone" id="zone-die" ondragover="genusDragOver(event)" ondrop="genusDrop(event,'die')" onclick="genusZoneClick('die')">
+                    <div class="genus-zone-label">die</div>
+                </div>
+                <div class="genus-zone" id="zone-das" ondragover="genusDragOver(event)" ondrop="genusDrop(event,'das')" onclick="genusZoneClick('das')">
+                    <div class="genus-zone-label">das</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         TAB 3: LÜCKENTEXT
+    ═══════════════════════════════════════════════════════════════ -->
+    <div class="section" id="sec-3">
+        <img class="tab-banner"
+             src="https://images.pexels.com/photos/3184465/pexels-photo-3184465.jpeg?auto=compress&cs=tinysrgb&w=800"
+             alt="Planung und Schreiben">
+        <div class="sec-inner">
+            <div class="control-bar">
+                <div class="btn-row">
+                    <button class="btn" onclick="resetLuecke(); resetTimer(3);">Neu starten</button>
+                </div>
+                <div class="timer-display">
+                    <span class="current-time">⏱ <span id="timer-3">00:00</span></span>
+                    <span class="best-time">🏆 <span id="best-3">--:--</span></span>
+                </div>
+            </div>
+            <h2 class="tab-title">Lückentext: Haustechnik und Nachhaltigkeit</h2>
+            <p class="tab-subtitle">Fülle die Lücken mit dem richtigen Wort aus dem Wörterkasten.</p>
+            <div class="word-bank" id="wordBank"></div>
+            <div class="luecke-text" id="lueckeText"></div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         TAB 4: ZUORDNUNG
+    ═══════════════════════════════════════════════════════════════ -->
+    <div class="section" id="sec-4">
+        <img class="tab-banner"
+             src="https://images.pexels.com/photos/3183197/pexels-photo-3183197.jpeg?auto=compress&cs=tinysrgb&w=800"
+             alt="Zusammenarbeit und Planung">
+        <div class="sec-inner">
+            <div class="control-bar">
+                <div class="btn-row">
+                    <button class="btn" onclick="resetMatch(); resetTimer(4);">Neu starten</button>
+                </div>
+                <div class="timer-display">
+                    <span class="current-time">⏱ <span id="timer-4">00:00</span></span>
+                    <span class="best-time">🏆 <span id="best-4">--:--</span></span>
+                </div>
+            </div>
+            <h2 class="tab-title">Zuordnung: Begriffe und Definitionen</h2>
+            <p class="tab-subtitle">Klicke auf einen Begriff (links) und dann auf die passende Beschreibung (rechts).</p>
+            <div class="match-container">
+                <div>
+                    <div class="match-col-label">Begriff</div>
+                    <div id="matchTerms"></div>
+                </div>
+                <div>
+                    <div class="match-col-label">Definition</div>
+                    <div id="matchDescs"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         TAB 5: SATZBAU
+    ═══════════════════════════════════════════════════════════════ -->
+    <div class="section" id="sec-5">
+        <img class="tab-banner"
+             src="https://images.pexels.com/photos/3862627/pexels-photo-3862627.jpeg?auto=compress&cs=tinysrgb&w=800"
+             alt="Architektur Satzbau">
+        <div class="sec-inner">
+            <div class="control-bar">
+                <div class="btn-row">
+                    <button class="btn" onclick="resetAllSatzbau(); resetTimer(5);">Neu starten</button>
+                </div>
+                <div class="timer-display">
+                    <span class="current-time">⏱ <span id="timer-5">00:00</span></span>
+                    <span class="best-time">🏆 <span id="best-5">--:--</span></span>
+                </div>
+            </div>
+            <h2 class="tab-title">Satzbau: Sätze ordnen</h2>
+            <p class="tab-subtitle">Ziehe die Chips in die richtige Reihenfolge.</p>
+            <div class="hilfe-box">💡 Ziehe die Chips aus dem blauen Kasten in den weißen Kasten. Wenn alle Chips platziert sind, siehst du sofort, ob der Satz richtig ist.</div>
+            <div id="satzbauContainer"></div>
+        </div>
+    </div>
+
+    <div class="author-footer">
+        <span class="author-name">&copy; Frank Burkert</span> &middot; DaF-Materialien &middot;
+        <a href="mailto:FrankBurkert@fabdaf.onmicrosoft.com">FrankBurkert@fabdaf.onmicrosoft.com</a>
+    </div>
+
+</div><!-- /container -->
+
+<div id="sb-insert-cursor"></div>
+
+<script>
+// ═════════════════════════════════════════════════════════════════
+// TAB NAVIGATION
+// ═════════════════════════════════════════════════════════════════
+function showSection(idx) {
+    document.querySelectorAll('.section').forEach(function(s, i) {
+        s.classList.toggle('active', i === idx);
+    });
+    document.querySelectorAll('.nav-btn').forEach(function(b, i) {
+        b.classList.toggle('active', i === idx);
+    });
+}
+
+// ═════════════════════════════════════════════════════════════════
+// TIMER SYSTEM
+// ═════════════════════════════════════════════════════════════════
+var TIMER_PREFIX = 'architekten_kap10_';
+var timers = [null, null, null, null, null, null];
+var timerIntervals = [null, null, null, null, null, null];
+
+function fmtTime(s) {
+    return String(Math.floor(s/60)).padStart(2,'0') + ':' + String(s%60).padStart(2,'0');
+}
+
+function timerAutoStart(idx) {
+    if (timers[idx] !== null) return;
+    timers[idx] = 0;
+    timerIntervals[idx] = setInterval(function() {
+        timers[idx]++;
+        var el = document.getElementById('timer-' + idx);
+        if (el) el.textContent = fmtTime(timers[idx]);
+    }, 1000);
+}
+
+function timerStop(idx) {
+    if (timerIntervals[idx]) {
+        clearInterval(timerIntervals[idx]);
+        timerIntervals[idx] = null;
+    }
+    var best = localStorage.getItem(TIMER_PREFIX + idx);
+    if (!best || timers[idx] < parseInt(best)) {
+        localStorage.setItem(TIMER_PREFIX + idx, timers[idx]);
+        var el = document.getElementById('best-' + idx);
+        if (el) el.textContent = fmtTime(timers[idx]);
+    }
+}
+
+function resetTimer(idx) {
+    if (timerIntervals[idx]) { clearInterval(timerIntervals[idx]); timerIntervals[idx] = null; }
+    timers[idx] = null;
+    var el = document.getElementById('timer-' + idx);
+    if (el) el.textContent = '00:00';
+}
+
+function loadBestTimes() {
+    for (var i = 2; i <= 5; i++) {
+        var best = localStorage.getItem(TIMER_PREFIX + i);
+        if (best) {
+            var el = document.getElementById('best-' + i);
+            if (el) el.textContent = fmtTime(parseInt(best));
+        }
+    }
+}
+
+// ═════════════════════════════════════════════════════════════════
+// TAB 0: VORENTLASTUNG
+// ═════════════════════════════════════════════════════════════════
+var VOCAB = [
+    { term: 'die Haustechnik / TGA (kein Pl.)', en: 'building services / MEP',
+      def: 'Alle technischen Anlagen eines Gebäudes: Heizung, Lüftung, Sanitär und Elektro. TGA = Technische Gebäudeausrüstung.' },
+    { term: 'die Heizungsanlage, -n', en: 'heating system',
+      def: 'Anlage zur Wärmeerzeugung und -verteilung im Gebäude. Heute oft als Wärmepumpe, früher Gas- oder Ölheizung.' },
+    { term: 'die Lüftungsanlage, -n', en: 'ventilation system',
+      def: 'Anlage für den kontrollierten Luftaustausch. In gut gedämmten Gebäuden unverzichtbar für Luftqualität und Feuchteschutz.' },
+    { term: 'die Sanitäranlage, -n', en: 'sanitary / plumbing installation',
+      def: 'Alle Rohrleitungen und Einrichtungen für Trinkwasser, Warmwasser und Abwasser in einem Gebäude.' },
+    { term: 'die Wärmedämmung, -en', en: 'thermal insulation',
+      def: 'Schicht aus Dämmmaterial (Mineralwolle, EPS) an Wänden, Dach und Boden — reduziert Wärmeverluste erheblich.' },
+    { term: 'der Energieausweis, -e', en: 'energy performance certificate',
+      def: 'Dokument mit dem Energiebedarf oder -verbrauch eines Gebäudes. Pflicht beim Verkauf oder bei der Vermietung seit 2014.' },
+    { term: 'das GEG (Gebäudeenergiegesetz)', en: 'Building Energy Act (Germany)',
+      def: 'Deutsches Bundesgesetz seit 2020: regelt die energetischen Mindestanforderungen an neue und bestehende Gebäude.' },
+    { term: 'die Nachhaltigkeit (kein Pl.)', en: 'sustainability',
+      def: 'Ressourcen so nutzen, dass künftige Generationen dieselben Möglichkeiten haben. In der Architektur: ökologisch, ökonomisch und sozial.' },
+    { term: 'die Photovoltaik (kein Pl.)', en: 'photovoltaics / solar panels',
+      def: 'Technologie zur Umwandlung von Sonnenlicht in elektrischen Strom über Solarzellen. Zunehmend Standard in Neubauten.' },
+    { term: 'die Wärmepumpe, -n', en: 'heat pump',
+      def: 'Heizgerät, das Wärme aus der Umwelt (Luft, Erdreich, Wasser) entnimmt und ins Gebäude überträgt — sehr energieeffizient.' },
+    { term: 'der Wärmeschutz (kein Pl.)', en: 'thermal protection',
+      def: 'Maßnahmen zur Verringerung des Wärmedurchgangs durch die Gebäudehülle. Unterschieden: Mindestwärmeschutz und erhöhter Wärmeschutz.' },
+    { term: 'das Kompositum, Komposita', en: 'compound word (grammar)',
+      def: 'Im Deutschen zusammengesetzte Wörter. Das letzte Wort bestimmt das Genus: Heizungs-anlage → die Anlage → die Heizungsanlage.' }
+];
+
+function initVocab() {
+    var grid = document.getElementById('vocabGrid');
+    VOCAB.forEach(function(v) {
+        var card = document.createElement('div');
+        card.className = 'vocab-card';
+        var html = '<div class="term">' + v.term + '</div>'
+            + '<div class="en">🇬🇧 ' + v.en + '</div>'
+            + '<div class="def">' + v.def + '</div>';
+        if (v.langs) {
+            html += '<div class="kb-langs">📚 ' + v.langs + '</div>';
+        }
+        card.innerHTML = html;
+        grid.appendChild(card);
+    });
+}
+
+// ═════════════════════════════════════════════════════════════════
+// TAB 2: GENUS EXERCISE
+// ═════════════════════════════════════════════════════════════════
+var genusData = [
+    { word: 'Energieausweis', cat: 'der' },
+    { word: 'Wärmeschutz',    cat: 'der' },
+    { word: 'Heizungsanlage', cat: 'die' },
+    { word: 'Lüftungsanlage', cat: 'die' },
+    { word: 'Sanitäranlage',  cat: 'die' },
+    { word: 'Wärmedämmung',   cat: 'die' },
+    { word: 'Nachhaltigkeit', cat: 'die' },
+    { word: 'Photovoltaik',   cat: 'die' },
+    { word: 'Wärmepumpe',     cat: 'die' },
+    { word: 'GEG',            cat: 'das' },
+    { word: 'Kompositum',     cat: 'das' },
+    { word: 'Gebäude',        cat: 'das' }
+];
+
+var draggedGenusChip = null;
+var selectedGenusChip = null;
+
+function shuffleArr(arr) {
+    for (var i = arr.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var t = arr[i]; arr[i] = arr[j]; arr[j] = t;
+    }
+    return arr;
+}
+
+function initGenus() {
+    var bank = document.getElementById('genusBank');
+    bank.innerHTML = '';
+    ['zone-der','zone-die','zone-das'].forEach(function(id) {
+        var z = document.getElementById(id);
+        var lbl = z.querySelector('.genus-zone-label');
+        z.innerHTML = '';
+        z.appendChild(lbl);
+    });
+    var shuffled = shuffleArr(genusData.slice());
+    shuffled.forEach(function(item) {
+        var chip = document.createElement('div');
+        chip.className = 'genus-chip';
+        chip.textContent = item.word;
+        chip.dataset.cat = item.cat;
+        chip.draggable = true;
+        chip.style.background = '#e8ecff';
+        chip.style.color = '#667eea';
+        chip.addEventListener('dragstart', function(e) {
+            draggedGenusChip = chip;
+            timerAutoStart(2);
+            e.dataTransfer.setData('text/plain', '');
+            setTimeout(function() { chip.style.opacity = '0.4'; }, 0);
+        });
+        chip.addEventListener('dragend', function() { chip.style.opacity = '1'; });
+        chip.addEventListener('click', function() {
+            if (selectedGenusChip) selectedGenusChip.classList.remove('selected');
+            if (selectedGenusChip === chip) { selectedGenusChip = null; return; }
+            selectedGenusChip = chip;
+            chip.classList.add('selected');
+        });
+        bank.appendChild(chip);
+    });
+}
+
+function genusDragOver(e) { e.preventDefault(); }
+function genusDrop(e, cat) {
+    e.preventDefault();
+    if (!draggedGenusChip) return;
+    document.getElementById('zone-' + cat).appendChild(draggedGenusChip);
+    draggedGenusChip = null;
+    timerAutoStart(2);
+    colorAllGenusChips();
+    if (checkGenusAllDone()) timerStop(2);
+}
+function genusZoneClick(cat) {
+    if (!selectedGenusChip) return;
+    document.getElementById('zone-' + cat).appendChild(selectedGenusChip);
+    selectedGenusChip.classList.remove('selected');
+    selectedGenusChip = null;
+    timerAutoStart(2);
+    colorAllGenusChips();
+    if (checkGenusAllDone()) timerStop(2);
+}
+function colorAllGenusChips() {
+    ['der','die','das'].forEach(function(cat) {
+        var zone = document.getElementById('zone-' + cat);
+        zone.querySelectorAll('.genus-chip').forEach(function(chip) {
+            chip.classList.toggle('correct', chip.dataset.cat === cat);
+            chip.classList.toggle('wrong',   chip.dataset.cat !== cat);
+        });
+    });
+}
+function checkGenusAllDone() {
+    var allPlaced = document.getElementById('genusBank').querySelectorAll('.genus-chip').length === 0;
+    if (!allPlaced) return false;
+    var allCorrect = true;
+    ['der','die','das'].forEach(function(cat) {
+        document.getElementById('zone-' + cat).querySelectorAll('.genus-chip').forEach(function(chip) {
+            if (chip.dataset.cat !== cat) allCorrect = false;
+        });
+    });
+    return allCorrect;
+}
+function resetGenus() { initGenus(); }
+
+// ═════════════════════════════════════════════════════════════════
+// TAB 3: LÜCKENTEXT
+// ═════════════════════════════════════════════════════════════════
+var lueckeData = [
+    { vor: 'Alle technischen Anlagen eines Gebäudes nennt man ', nach: ' oder TGA.', ans: 'Haustechnik', size: 120 },
+    { vor: 'Die ', nach: ' erzeugt und verteilt Wärme im Gebäude.', ans: 'Heizungsanlage', size: 150 },
+    { vor: 'Eine gute ', nach: ' an Wänden und Dach reduziert die Wärmeverluste.', ans: 'Wärmedämmung', size: 130 },
+    { vor: 'Die ', nach: ' sorgt für frische Luft und regelt die Luftfeuchtigkeit.', ans: 'Lüftungsanlage', size: 150 },
+    { vor: 'Die ', nach: ' wandelt Sonnenlicht in elektrischen Strom um.', ans: 'Photovoltaik', size: 120 },
+    { vor: 'Die ', nach: ' gewinnt Wärme aus Luft, Erdreich oder Grundwasser.', ans: 'Wärmepumpe', size: 120 },
+    { vor: 'Das ', nach: ' gibt an, wie energieeffizient ein Gebäude ist.', ans: 'GEG', size: 50 },
+    { vor: 'Beim Verkauf eines Gebäudes ist ein ', nach: ' Pflicht.', ans: 'Energieausweis', size: 150 },
+    { vor: '', nach: ' bedeutet, Ressourcen so zu nutzen, dass künftige Generationen sie ebenfalls nutzen können.', ans: 'Nachhaltigkeit', size: 150 },
+    { vor: 'Im Deutschen sind viele Fachbegriffe ', nach: ' — zusammengesetzte Wörter.', ans: 'Komposita', size: 100 },
+    { vor: 'Die ', nach: ' regelt alle Rohrleitungen für Wasser und Abwasser.', ans: 'Sanitäranlage', size: 130 },
+    { vor: 'Der ', nach: ' beschreibt Maßnahmen gegen Wärmeverluste durch die Gebäudehülle.', ans: 'Wärmeschutz', size: 120 }
+];
+
+var wordBankWords = ['Haustechnik','Heizungsanlage','Wärmedämmung','Lüftungsanlage',
+                     'Photovoltaik','Wärmepumpe','GEG','Energieausweis',
+                     'Nachhaltigkeit','Komposita','Sanitäranlage','Wärmeschutz'];
+
+function initLuecke() {
+    var wb = document.getElementById('wordBank');
+    wb.innerHTML = '';
+    wordBankWords.forEach(function(w) {
+        var chip = document.createElement('span');
+        chip.className = 'word-chip';
+        chip.textContent = w;
+        wb.appendChild(chip);
+    });
+    var lt = document.getElementById('lueckeText');
+    lt.innerHTML = '';
+    var p = document.createElement('p');
+    lueckeData.forEach(function(item, i) {
+        p.appendChild(document.createTextNode(item.vor));
+        var inp = document.createElement('input');
+        inp.type = 'text';
+        inp.className = 'luecke-input';
+        inp.style.width = item.size + 'px';
+        inp.dataset.idx = i;
+        inp.dataset.answer = item.ans.toLowerCase();
+        inp.setAttribute('autocomplete', 'off');
+        inp.setAttribute('spellcheck', 'false');
+        inp.addEventListener('input', function() {
+            timerAutoStart(3);
+            checkLuecke(parseInt(this.dataset.idx));
+        });
+        p.appendChild(inp);
+        p.appendChild(document.createTextNode(item.nach + ' '));
+        if ((i + 1) % 4 === 0) {
+            lt.appendChild(p);
+            p = document.createElement('p');
+        }
+    });
+    if (p.childNodes.length > 0) lt.appendChild(p);
+}
+
+function checkLuecke(idx) {
+    var inp = document.querySelector('.luecke-input[data-idx="' + idx + '"]');
+    if (!inp) return;
+    var val = inp.value.trim().toLowerCase();
+    var ans = inp.dataset.answer;
+    if (val === '') { inp.className = 'luecke-input'; return; }
+    if (val === ans) {
+        inp.className = 'luecke-input correct';
+        if (checkLueckeAllDone()) timerStop(3);
+    } else if (ans.startsWith(val)) {
+        inp.className = 'luecke-input';
+    } else {
+        inp.className = 'luecke-input wrong';
+    }
+}
+function checkLueckeAllDone() {
+    var all = document.querySelectorAll('.luecke-input');
+    for (var i = 0; i < all.length; i++) {
+        if (!all[i].classList.contains('correct')) return false;
+    }
+    return true;
+}
+function resetLuecke() { initLuecke(); }
+
+// ═════════════════════════════════════════════════════════════════
+// TAB 4: ZUORDNUNG / MATCHING
+// ═════════════════════════════════════════════════════════════════
+var matchData = [
+    { term: 'TGA', desc: 'Technische Gebäudeausrüstung: Heizung, Lüftung, Sanitär, Elektro' },
+    { term: 'GEG', desc: 'Deutsches Gesetz seit 2020 für energetische Anforderungen an Gebäude' },
+    { term: 'Photovoltaik', desc: 'Wandelt Sonnenlicht direkt in elektrischen Strom um' },
+    { term: 'Wärmepumpe', desc: 'Gewinnt Wärme aus Luft, Erdreich oder Grundwasser' },
+    { term: 'Energieausweis', desc: 'Pflichtdokument beim Verkauf oder Vermietung eines Gebäudes' },
+    { term: 'Kompositum', desc: 'Zusammengesetztes deutsches Wort — das letzte Wort bestimmt das Genus' },
+    { term: 'Wärmedämmung', desc: 'Reduziert Wärmeverluste durch Wände, Dach und Boden' },
+    { term: 'Nachhaltigkeit', desc: 'Ressourcen so nutzen, dass künftige Generationen dieselben Möglichkeiten haben' }
+];
+
+var matchSelected = null;
+var matchPaired = [];
+var matchShuffledDescs = [];
+
+function initMatch() {
+    matchSelected = null;
+    matchPaired = [];
+    matchShuffledDescs = shuffleArr(matchData.map(function(d, i) { return { desc: d.desc, idx: i }; }));
+    var termsDiv = document.getElementById('matchTerms');
+    var descsDiv = document.getElementById('matchDescs');
+    termsDiv.innerHTML = '';
+    descsDiv.innerHTML = '';
+    matchData.forEach(function(d, i) {
+        var el = document.createElement('div');
+        el.className = 'match-item';
+        el.textContent = d.term;
+        el.dataset.idx = i;
+        el.dataset.side = 'term';
+        el.addEventListener('click', function() { handleMatchClick('term', i); });
+        termsDiv.appendChild(el);
+    });
+    matchShuffledDescs.forEach(function(d) {
+        var el = document.createElement('div');
+        el.className = 'match-item';
+        el.textContent = d.desc;
+        el.dataset.idx = d.idx;
+        el.dataset.side = 'desc';
+        el.addEventListener('click', function() { handleMatchClick('desc', d.idx); });
+        descsDiv.appendChild(el);
+    });
+}
+
+function handleMatchClick(type, idx) {
+    if (matchPaired.indexOf(idx) >= 0) return;
+    timerAutoStart(4);
+    if (!matchSelected) {
+        matchSelected = { type: type, idx: idx };
+        document.querySelectorAll('.match-item[data-side="' + type + '"][data-idx="' + idx + '"]').forEach(function(el) {
+            el.classList.add('selected');
+        });
+        return;
+    }
+    if (matchSelected.type === type) {
+        document.querySelectorAll('.match-item.selected').forEach(function(el) { el.classList.remove('selected'); });
+        matchSelected = { type: type, idx: idx };
+        document.querySelectorAll('.match-item[data-side="' + type + '"][data-idx="' + idx + '"]').forEach(function(el) {
+            el.classList.add('selected');
+        });
+        return;
+    }
+    var termIdx = type === 'desc' ? matchSelected.idx : idx;
+    var descIdx = type === 'desc' ? idx : matchSelected.idx;
+    var correct = termIdx === descIdx;
+    ['term','desc'].forEach(function(side) {
+        var i = side === 'term' ? termIdx : descIdx;
+        document.querySelectorAll('.match-item[data-side="' + side + '"][data-idx="' + i + '"]').forEach(function(el) {
+            el.classList.remove('selected');
+            el.classList.add(correct ? 'correct' : 'wrong');
+            setTimeout(function() {
+                if (!correct) el.classList.remove('wrong');
+            }, 900);
+        });
+    });
+    if (correct) {
+        matchPaired.push(termIdx);
+        if (matchPaired.length === matchData.length) timerStop(4);
+    }
+    matchSelected = null;
+}
+
+function resetMatch() { initMatch(); }
+
+// ═════════════════════════════════════════════════════════════════
+// TAB 5: SATZBAU DRAG-DROP
+// ═════════════════════════════════════════════════════════════════
+var satzbauData = [
+    { parts: ['die', 'TGA', 'umfasst', 'alle', 'technischen', 'Anlagen', 'des', 'Gebäudes'],
+      valid: [['die','TGA','umfasst','alle','technischen','Anlagen','des','Gebäudes']], punct: '.' },
+    { parts: ['die', 'Wärmepumpe', 'ist', 'sehr', 'energieeffizient'],
+      valid: [['die','Wärmepumpe','ist','sehr','energieeffizient']], punct: '.' },
+    { parts: ['das', 'GEG', 'regelt', 'den', 'Energiebedarf', 'von', 'Gebäuden'],
+      valid: [['das','GEG','regelt','den','Energiebedarf','von','Gebäuden']], punct: '.' },
+    { parts: ['Photovoltaik', 'wandelt', 'Sonnenlicht', 'in', 'elektrischen', 'Strom', 'um'],
+      valid: [['Photovoltaik','wandelt','Sonnenlicht','in','elektrischen','Strom','um']], punct: '.' },
+    { parts: ['die', 'Wärmedämmung', 'reduziert', 'die', 'Heizkosten', 'erheblich'],
+      valid: [['die','Wärmedämmung','reduziert','die','Heizkosten','erheblich']], punct: '.' },
+    { parts: ['beim', 'Verkauf', 'ist', 'ein', 'Energieausweis', 'Pflicht'],
+      valid: [['beim','Verkauf','ist','ein','Energieausweis','Pflicht']], punct: '.' },
+    { parts: ['das', 'letzte', 'Wort', 'bestimmt', 'das', 'Genus', 'des', 'Kompositums'],
+      valid: [['das','letzte','Wort','bestimmt','das','Genus','des','Kompositums']], punct: '.' },
+    { parts: ['Nachhaltigkeit', 'ist', 'ein', 'wichtiges', 'Ziel', 'in', 'der', 'Architektur'],
+      valid: [['Nachhaltigkeit','ist','ein','wichtiges','Ziel','in','der','Architektur']], punct: '.' }
+];
+
+var sbDragged = null;
+
+function initSatzbau() {
+    var container = document.getElementById('satzbauContainer');
+    container.innerHTML = '';
+    satzbauData.forEach(function(sent, idx) {
+        var div = document.createElement('div');
+        div.className = 'sb-sentence';
+        div.id = 'sb-sent-' + idx;
+
+        var drop = document.createElement('div');
+        drop.className = 'sb-drop-zone';
+        drop.id = 'sb-drop-' + idx;
+        var punct = document.createElement('span');
+        punct.className = 'sb-punct';
+        punct.id = 'sb-punct-' + idx;
+        punct.textContent = sent.punct;
+        drop.appendChild(punct);
+        drop.addEventListener('dragover', function(e) { sbDragOver(e, idx); });
+        drop.addEventListener('dragleave', function() { drop.classList.remove('drag-over'); hideCursor(); });
+        drop.addEventListener('drop', function(e) { sbDrop(e, idx); });
+
+        var bank = document.createElement('div');
+        bank.className = 'sb-bank';
+        bank.id = 'sb-bank-' + idx;
+
+        var shuffled = shuffleArr(sent.parts.slice());
+        shuffled.forEach(function(word) {
+            bank.appendChild(makeChip(word, idx));
+        });
+
+        div.appendChild(drop);
+        div.appendChild(bank);
+        container.appendChild(div);
+    });
+}
+
+function makeChip(word, sentIdx) {
+    var chip = document.createElement('div');
+    chip.className = 'sb-chip';
+    chip.textContent = word;
+    chip.dataset.orig = word;
+    chip.draggable = true;
+    chip.addEventListener('dragstart', function(e) {
+        sbDragged = chip;
+        timerAutoStart(5);
+        e.dataTransfer.setData('text/plain', '');
+        setTimeout(function() { chip.classList.add('dragging'); }, 0);
+    });
+    chip.addEventListener('dragend', function() {
+        chip.classList.remove('dragging');
+        hideCursor();
+    });
+    chip.addEventListener('click', function() { sbChipClick(chip, sentIdx); });
+    return chip;
+}
+
+var sbSelectedChip = null;
+function sbChipClick(chip, sentIdx) {
+    var drop = document.getElementById('sb-drop-' + sentIdx);
+    var bank = document.getElementById('sb-bank-' + sentIdx);
+    var inDrop = drop.contains(chip);
+    var inBank = bank.contains(chip);
+    if (inBank) {
+        if (sbSelectedChip) sbSelectedChip.style.outline = '';
+        sbSelectedChip = chip;
+        chip.style.outline = '2px solid #667eea';
+        return;
+    }
+    if (inDrop && sbSelectedChip && bank.contains(sbSelectedChip)) {
+        var punct = document.getElementById('sb-punct-' + sentIdx);
+        drop.insertBefore(sbSelectedChip, punct);
+        sbSelectedChip.style.outline = '';
+        sbSelectedChip = null;
+        timerAutoStart(5);
+        sbCapitalize(sentIdx);
+        setTimeout(function() { var ok = sbColorRow(sentIdx); if (ok) checkAllSatzbauDone(); }, 500);
+        return;
+    }
+    if (inDrop) {
+        bank.appendChild(chip);
+        sbCapitalize(sentIdx);
+        sbColorRow(sentIdx);
+    }
+}
+
+function sbDragOver(e, idx) {
+    e.preventDefault();
+    if (!sbDragged) return;
+    var drop = document.getElementById('sb-drop-' + idx);
+    drop.classList.add('drag-over');
+    var cursor = document.getElementById('sb-insert-cursor');
+    cursor.style.display = 'block';
+    var after = getDragAfterElement(drop, e.clientX);
+    var punct = document.getElementById('sb-punct-' + idx);
+    if (!after) {
+        drop.insertBefore(cursor, punct);
+    } else {
+        drop.insertBefore(cursor, after);
+    }
+}
+
+function getDragAfterElement(container, x) {
+    var els = [].slice.call(container.querySelectorAll('.sb-chip:not(.dragging)'));
+    var res = null, closest = Infinity;
+    els.forEach(function(el) {
+        var box = el.getBoundingClientRect();
+        var offset = x - (box.left + box.width / 2);
+        if (offset < 0 && offset > -closest) { closest = -offset; res = el; }
+    });
+    return res;
+}
+
+function hideCursor() {
+    var c = document.getElementById('sb-insert-cursor');
+    if (c) { c.style.display = 'none'; if (c.parentNode) c.parentNode.removeChild(c); }
+}
+
+function sbDrop(e, idx) {
+    e.preventDefault();
+    if (!sbDragged) return;
+    hideCursor();
+    var drop = document.getElementById('sb-drop-' + idx);
+    var bank = document.getElementById('sb-bank-' + idx);
+    drop.classList.remove('drag-over');
+    var after = getDragAfterElement(drop, e.clientX);
+    var punct = document.getElementById('sb-punct-' + idx);
+    if (!after) { drop.insertBefore(sbDragged, punct); }
+    else { drop.insertBefore(sbDragged, after); }
+    sbDragged = null;
+    timerAutoStart(5);
+    sbCapitalize(idx);
+    setTimeout(function() { var ok = sbColorRow(idx); if (ok) checkAllSatzbauDone(); }, 500);
+}
+
+function sbCapitalize(idx) {
+    var drop = document.getElementById('sb-drop-' + idx);
+    var chips = drop.querySelectorAll('.sb-chip');
+    chips.forEach(function(chip, i) {
+        var orig = chip.dataset.orig;
+        chip.textContent = (i === 0) ? orig.charAt(0).toUpperCase() + orig.slice(1) : orig;
+    });
+}
+
+function sbColorRow(idx) {
+    var drop = document.getElementById('sb-drop-' + idx);
+    var bank = document.getElementById('sb-bank-' + idx);
+    var chips = drop.querySelectorAll('.sb-chip');
+    if (bank.querySelectorAll('.sb-chip').length > 0) {
+        drop.classList.remove('correct','wrong');
+        document.getElementById('sb-punct-' + idx).style.display = 'none';
+        return false;
+    }
+    var placed = [].map.call(chips, function(c) { return c.dataset.orig; });
+    var sent = satzbauData[idx];
+    var ok = sent.valid.some(function(v) {
+        if (v.length !== placed.length) return false;
+        return v.every(function(w, i) { return w === placed[i]; });
+    });
+    drop.classList.toggle('correct', ok);
+    drop.classList.toggle('wrong', !ok);
+    var punct = document.getElementById('sb-punct-' + idx);
+    punct.style.display = ok ? 'inline' : 'none';
+    return ok;
+}
+
+function checkAllSatzbauDone() {
+    for (var i = 0; i < satzbauData.length; i++) {
+        if (!document.getElementById('sb-drop-' + i).classList.contains('correct')) return;
+    }
+    timerStop(5);
+}
+
+function resetAllSatzbau() { initSatzbau(); }
+
+// ═════════════════════════════════════════════════════════════════
+// INIT
+// ═════════════════════════════════════════════════════════════════
+initVocab();
+initGenus();
+initLuecke();
+initMatch();
+initSatzbau();
+loadBestTimes();
+</script>
+</body>
+</html>
