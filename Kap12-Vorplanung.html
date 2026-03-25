@@ -350,16 +350,16 @@ var ZUORDNUNG_DATA = [
 ];
 
 var SB_DATA = [
-    { parts: ['Es', 'gibt', 'eine', 'Struktur', 'aus', 'Wänden', '.'], punct: '.' },
-    { parts: ['Diese', 'Struktur', 'lässt', 'den', 'Hang', 'durchfließen', '.'], punct: '.' },
-    { parts: ['Zwischen', 'den', 'Wänden', 'befinden', 'sich', 'die', 'Lebensräume', '.'], punct: '.' },
-    { parts: ['So', 'kommt', 'viel', 'Licht', 'in', 'die', 'Innenräume', '.'], punct: '.' },
-    { parts: ['Außerdem', 'gibt', 'es', 'Oberlichter', ',', 'die', 'besondere', 'Bereiche', 'betonen', '.'], punct: '.' },
-    { parts: ['Hier', 'stelle', 'ich', 'mir', 'eine', 'Art', 'Wellness-Hof', 'vor', '.'], punct: '.' },
-    { parts: ['Die', 'Vorplanung', 'ist', 'eine', 'äußerst', 'kreative', 'Phase', '.'], punct: '.' },
-    { parts: ['Die', 'Zeichnung', 'ist', 'die', 'universelle', 'Sprache', 'der', 'Planer', '.'], punct: '.' },
-    { parts: ['Bis', 'spätestens', 'Mittwoch', 'brauchen', 'wir', 'die', 'Varianten', '.'], punct: '.' },
-    { parts: ['Trauen', 'Sie', 'sich', 'zu', ',', 'dem', 'Bauherrn', 'das', 'Projekt', 'zu', 'präsentieren', '?'], punct: '?' },
+    { parts: ['Es', 'gibt', 'eine', 'Struktur', 'aus', 'Wänden'], punct: '.' },
+    { parts: ['Diese', 'Struktur', 'lässt', 'den', 'Hang', 'durchfließen'], punct: '.' },
+    { parts: ['Zwischen', 'den', 'Wänden', 'befinden', 'sich', 'die', 'Lebensräume'], punct: '.' },
+    { parts: ['So', 'kommt', 'viel', 'Licht', 'in', 'die', 'Innenräume'], punct: '.' },
+    { parts: ['Außerdem', 'gibt', 'es', 'Oberlichter', ',', 'die', 'besondere', 'Bereiche', 'betonen'], punct: '.' },
+    { parts: ['Hier', 'stelle', 'ich', 'mir', 'eine', 'Art', 'Wellness-Hof', 'vor'], punct: '.' },
+    { parts: ['Die', 'Vorplanung', 'ist', 'eine', 'äußerst', 'kreative', 'Phase'], punct: '.' },
+    { parts: ['Die', 'Zeichnung', 'ist', 'die', 'universelle', 'Sprache', 'der', 'Planer'], punct: '.' },
+    { parts: ['Bis', 'spätestens', 'Mittwoch', 'brauchen', 'wir', 'die', 'Varianten'], punct: '.' },
+    { parts: ['Trauen', 'Sie', 'sich', 'zu', ',', 'dem', 'Bauherrn', 'das', 'Projekt', 'zu', 'präsentieren'], punct: '?' },
 ];
 
 // ============================================================
@@ -458,7 +458,7 @@ function initGenus() {
         chip.draggable = true;
         chip.addEventListener('dragstart', function(e){ e.dataTransfer.setData('text/plain',''); draggedGenusChip=chip; });
         chip.addEventListener('dragend', function(){ colorAllGenusChips(); });
-        chip.addEventListener('click', function(){ draggedGenusChip = (draggedGenusChip===chip) ? null : chip; });
+        chip.addEventListener('click', function(e){ e.stopPropagation(); draggedGenusChip = (draggedGenusChip===chip) ? null : chip; });
         bank.appendChild(chip);
     });
     bank.addEventListener('dragover', function(e){ e.preventDefault(); });
@@ -594,7 +594,7 @@ function initZuordnung() {
         chip.dataset.key = item.key;
         chip.draggable = true;
         chip.addEventListener('dragstart', function(e){ e.dataTransfer.setData('text/plain',''); draggedZuordChip=chip; });
-        chip.addEventListener('click', function(){ draggedZuordChip = (draggedZuordChip===chip) ? null : chip; });
+        chip.addEventListener('click', function(e){ e.stopPropagation(); draggedZuordChip = (draggedZuordChip===chip) ? null : chip; });
         bankEl.appendChild(chip);
     });
     bankEl.addEventListener('dragover', function(e){ e.preventDefault(); });
@@ -696,6 +696,9 @@ function initSb() {
             e.preventDefault(); row.classList.remove('dragover');
             if(sbDragged){ row.appendChild(sbDragged); sbDragged=null; timerAutoStart(5); setTimeout(function(){ checkSbAuto(idx, sent.parts); }, 300); }
         });
+        row.addEventListener('click', function(){
+            if(sbDragged){ row.appendChild(sbDragged); sbDragged=null; timerAutoStart(5); setTimeout(function(){ checkSbAuto(idx, sent.parts); }, 300); }
+        });
 
         // Bank drop handlers
         bank.addEventListener('dragover', function(e){ e.preventDefault(); });
@@ -717,7 +720,8 @@ function createSbChip(word, sentIdx, correctParts) {
     chip.draggable = true;
     chip.addEventListener('dragstart', function(e){ e.dataTransfer.setData('text/plain',''); sbDragged=chip; });
     chip.addEventListener('dragend', function(){ /* color after drop */ });
-    chip.addEventListener('click', function(){
+    chip.addEventListener('click', function(e){
+        e.stopPropagation();
         sbDragged = (sbDragged===chip) ? null : chip;
     });
     return chip;
