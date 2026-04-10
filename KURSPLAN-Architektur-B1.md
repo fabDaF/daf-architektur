@@ -30,7 +30,7 @@ Hier empfiehlt sich die chronologische Reihenfolge (LP 2 → 3 → 4 → 5).
 | 3 | Kap. 9 | **Baustoffe** | Beton, Holz, Stahl · Vorgangspassiv · Suffixe bei Adjektiven | `Kap09-Baustoffe.html` |
 | 4 | Kap. 10 | **Haustechnik** | TGA, GEG, Nachhaltigkeit · Komposita | `Kap10-Haustechnik.html` |
 | 5 | Kap. 12 | **Vorplanung (LP 2)** | E-Mails schreiben · Zeichnungstypen · Präpositionen + Akk. | `Kap12-Vorplanung.html` |
-| 6 | Kap. 13 | **Entwurfsplanung (LP 3)** | Entwurfsbeschreibung · Redemittel Telefonate · Projektdialog | `Kap13-Entwurfsplanung.html` |
+| 6 | Kap. 13 | **Entwurfsplanung (LP 3)** | Entwurfsbeschreibung · Redemittel Telefonate · Projektdialog | `Kap13-Entwurfsplanung.html` ✅ |
 | 7 | Kap. 14 | **Genehmigungsplanung (LP 4)** | Bauantrag · Nomen-Verb-Verbindungen · Aktenvermerke · Baurechtsamt | `Kap14-Genehmigung.html` |
 | 8 | Kap. 15 | **Ausführungsplanung (LP 5)** | Detailzeichnungen · Abkürzungen · Videokonferenz Tragwerksplaner | `Kap15-Ausfuehrung.html` |
 
@@ -63,8 +63,10 @@ Kein Satz wird nummeriert. Komma und Semikolon sind eigene Chips.
 - [ ] HTML-Datei Kap. 8 (Bauelemente) erstellen
 - [ ] HTML-Datei Kap. 9 (Baustoffe + Vorgangspassiv) erstellen
 - [ ] HTML-Datei Kap. 10 (Haustechnik + Komposita) erstellen
-- [ ] HTML-Dateien Kap. 12–15 erstellen (LP-Reihenfolge)
-- [ ] Kap04-Datei auf GitHub Pages deployen
+- [x] HTML-Datei Kap. 12 (Vorplanung LP2) erstellt ✅
+- [x] HTML-Datei Kap. 13 (Entwurfsplanung LP3) erstellt ✅
+- [ ] HTML-Datei Kap. 14 (Genehmigungsplanung LP4) erstellen
+- [ ] HTML-Datei Kap. 15 (Ausführungsplanung LP5) erstellen
 
 ---
 
