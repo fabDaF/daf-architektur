@@ -934,16 +934,16 @@ function resetMatch() { initMatch(); }
 var satzbauData = [
     { parts: ['die', 'TGA', 'umfasst', 'alle', 'technischen', 'Anlagen', 'des', 'Gebäudes'],
       valid: [['die','TGA','umfasst','alle','technischen','Anlagen','des','Gebäudes']], punct: '.' },
-    { parts: ['die', 'Wärmepumpe', 'ist', 'sehr', 'energieeffizient'],
-      valid: [['die','Wärmepumpe','ist','sehr','energieeffizient']], punct: '.' },
+    { parts: ['eine', 'Wärmepumpe', 'ist', 'im', 'Betrieb', 'sehr', 'energieeffizient'],
+      valid: [['eine','Wärmepumpe','ist','im','Betrieb','sehr','energieeffizient']], punct: '.' },
     { parts: ['das', 'GEG', 'regelt', 'den', 'Energiebedarf', 'von', 'Gebäuden'],
       valid: [['das','GEG','regelt','den','Energiebedarf','von','Gebäuden']], punct: '.' },
     { parts: ['Photovoltaik', 'wandelt', 'Sonnenlicht', 'in', 'elektrischen', 'Strom', 'um'],
       valid: [['Photovoltaik','wandelt','Sonnenlicht','in','elektrischen','Strom','um']], punct: '.' },
-    { parts: ['die', 'Wärmedämmung', 'reduziert', 'die', 'Heizkosten', 'erheblich'],
-      valid: [['die','Wärmedämmung','reduziert','die','Heizkosten','erheblich']], punct: '.' },
-    { parts: ['beim', 'Verkauf', 'ist', 'ein', 'Energieausweis', 'Pflicht'],
-      valid: [['beim','Verkauf','ist','ein','Energieausweis','Pflicht']], punct: '.' },
+    { parts: ['eine', 'gute', 'Wärmedämmung', 'reduziert', 'die', 'Heizkosten', 'erheblich'],
+      valid: [['eine','gute','Wärmedämmung','reduziert','die','Heizkosten','erheblich']], punct: '.' },
+    { parts: ['beim', 'Verkauf', 'ist', 'ein', 'gültiger', 'Energieausweis', 'Pflicht'],
+      valid: [['beim','Verkauf','ist','ein','gültiger','Energieausweis','Pflicht']], punct: '.' },
     { parts: ['das', 'letzte', 'Wort', 'bestimmt', 'das', 'Genus', 'des', 'Kompositums'],
       valid: [['das','letzte','Wort','bestimmt','das','Genus','des','Kompositums']], punct: '.' },
     { parts: ['Nachhaltigkeit', 'ist', 'ein', 'wichtiges', 'Ziel', 'in', 'der', 'Architektur'],
@@ -981,8 +981,19 @@ function initSatzbau() {
             bank.appendChild(makeChip(word, idx));
         });
 
+        var btnRow = document.createElement('div');
+        btnRow.style.cssText = 'display:flex;gap:8px;margin-top:6px;';
+        var solveBtn = document.createElement('button');
+        solveBtn.className = 'btn'; solveBtn.textContent = 'Lösen';
+        (function(i) { solveBtn.addEventListener('click', function() { sbShowSolution(i); }); })(idx);
+        var resetBtn = document.createElement('button');
+        resetBtn.className = 'btn'; resetBtn.textContent = '↺ Neustart';
+        (function(i) { resetBtn.addEventListener('click', function() { sbResetOne(i); }); })(idx);
+        btnRow.appendChild(solveBtn); btnRow.appendChild(resetBtn);
+
         div.appendChild(drop);
         div.appendChild(bank);
+        div.appendChild(btnRow);
         container.appendChild(div);
     });
 }
@@ -1124,6 +1135,55 @@ function checkAllSatzbauDone() {
 }
 
 function resetAllSatzbau() { initSatzbau(); }
+
+function sbCheckAuto(idx) {
+    var bank = document.getElementById('sb-bank-' + idx);
+    var drop = document.getElementById('sb-drop-' + idx);
+    if (!drop) return;
+    if (bank && bank.querySelectorAll('.sb-chip').length > 0) {
+        drop.classList.remove('correct', 'wrong');
+        return;
+    }
+    setTimeout(function() {
+        var ok = sbColorRow(idx);
+        if (ok) checkAllSatzbauDone();
+    }, 500);
+}
+
+function sbShowSolution(idx) {
+    var drop = document.getElementById('sb-drop-' + idx);
+    var bank = document.getElementById('sb-bank-' + idx);
+    var punct = document.getElementById('sb-punct-' + idx);
+    var solution = satzbauData[idx].valid[0];
+    var allChips = {};
+    Array.from(drop.querySelectorAll('.sb-chip')).forEach(function(c) { allChips[c.dataset.orig] = c; });
+    Array.from(bank.querySelectorAll('.sb-chip')).forEach(function(c) { allChips[c.dataset.orig] = c; });
+    while (drop.firstChild && drop.firstChild !== punct) drop.removeChild(drop.firstChild);
+    while (bank.firstChild) bank.removeChild(bank.firstChild);
+    solution.forEach(function(word) {
+        var chip = allChips[word];
+        if (chip) drop.insertBefore(chip, punct);
+    });
+    sbCapitalize(idx);
+    setTimeout(function() { sbCheckAuto(idx); }, 100);
+}
+
+function sbResetOne(idx) {
+    var drop = document.getElementById('sb-drop-' + idx);
+    var bank = document.getElementById('sb-bank-' + idx);
+    var punct = document.getElementById('sb-punct-' + idx);
+    var allChips = [];
+    Array.from(drop.querySelectorAll('.sb-chip')).forEach(function(c) { allChips.push(c); });
+    Array.from(bank.querySelectorAll('.sb-chip')).forEach(function(c) { allChips.push(c); });
+    while (drop.firstChild && drop.firstChild !== punct) drop.removeChild(drop.firstChild);
+    while (bank.firstChild) bank.removeChild(bank.firstChild);
+    for (var i = allChips.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var tmp = allChips[i]; allChips[i] = allChips[j]; allChips[j] = tmp;
+    }
+    allChips.forEach(function(c) { bank.appendChild(c); });
+    drop.classList.remove('correct', 'wrong');
+}
 
 // ═════════════════════════════════════════════════════════════════
 // INIT
