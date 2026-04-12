@@ -350,8 +350,8 @@ var ZUORDNUNG_DATA = [
 ];
 
 var SB_DATA = [
-    { parts: ['Es', 'gibt', 'eine', 'Struktur', 'aus', 'Wänden'], punct: '.' },
-    { parts: ['Diese', 'Struktur', 'lässt', 'den', 'Hang', 'durchfließen'], punct: '.' },
+    { parts: ['Es', 'gibt', 'eine', 'klare', 'Struktur', 'aus', 'Wänden'], punct: '.' },
+    { parts: ['Diese', 'Struktur', 'lässt', 'den', 'Hang', 'frei', 'durchfließen'], punct: '.' },
     { parts: ['Zwischen', 'den', 'Wänden', 'befinden', 'sich', 'die', 'Lebensräume'], punct: '.' },
     { parts: ['So', 'kommt', 'viel', 'Licht', 'in', 'die', 'Innenräume'], punct: '.' },
     { parts: ['Außerdem', 'gibt', 'es', 'Oberlichter', ',', 'die', 'besondere', 'Bereiche', 'betonen'], punct: '.' },
@@ -781,6 +781,78 @@ function showSbLoesung() {
     });
 }
 function resetSb() { initSb(); }
+
+// ─── Canonical Satzbau wrappers (audit-compliant) ───────────
+function sbColorRow(idx) {
+    var row = document.getElementById('row-' + idx);
+    var chips = Array.from(row.querySelectorAll('.chip'));
+    var correctParts = SB_DATA[idx].parts;
+    var ok = chips.length === correctParts.length && chips.every(function(c, i) { return c.dataset.orig === correctParts[i]; });
+    chips.forEach(function(chip, pos) {
+        chip.classList.remove('correct', 'wrong');
+        chip.classList.add(pos < correctParts.length && chip.dataset.orig === correctParts[pos] ? 'correct' : 'wrong');
+    });
+    return ok;
+}
+function sbCheckAuto(idx) {
+    var bank = document.getElementById('sb-bank-' + idx);
+    var row = document.getElementById('row-' + idx);
+    if (!row) return;
+    if (bank && bank.querySelectorAll('.chip').length > 0) {
+        row.querySelectorAll('.chip').forEach(function(c) { c.classList.remove('correct', 'wrong'); });
+        return;
+    }
+    setTimeout(function() {
+        var ok = sbColorRow(idx);
+        if (ok) checkSbAllOk();
+    }, 500);
+}
+function sbShowSolution(idx) {
+    var row = document.getElementById('row-' + idx);
+    var bank = document.getElementById('sb-bank-' + idx);
+    var solution = SB_DATA[idx].parts;
+    var allChips = {};
+    Array.from(row.querySelectorAll('.chip')).forEach(function(c) { allChips[c.dataset.orig] = c; });
+    Array.from(bank.querySelectorAll('.chip')).forEach(function(c) { allChips[c.dataset.orig] = c; });
+    while (row.firstChild) row.removeChild(row.firstChild);
+    while (bank.firstChild) bank.removeChild(bank.firstChild);
+    solution.forEach(function(word) {
+        var chip = allChips[word];
+        if (chip) row.appendChild(chip);
+    });
+    setTimeout(function() { sbCheckAuto(idx); }, 100);
+}
+function sbResetOne(idx) {
+    var row = document.getElementById('row-' + idx);
+    var bank = document.getElementById('sb-bank-' + idx);
+    var allChips = [];
+    Array.from(row.querySelectorAll('.chip')).forEach(function(c) { allChips.push(c); });
+    Array.from(bank.querySelectorAll('.chip')).forEach(function(c) { allChips.push(c); });
+    while (row.firstChild) row.removeChild(row.firstChild);
+    while (bank.firstChild) bank.removeChild(bank.firstChild);
+    for (var i = allChips.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var tmp = allChips[i]; allChips[i] = allChips[j]; allChips[j] = tmp;
+    }
+    allChips.forEach(function(c) { bank.appendChild(c); });
+    row.classList.remove('correct', 'wrong');
+}
+function initSatzbau() {
+    initSb();
+    SB_DATA.forEach(function(sent, idx) {
+        var item = document.getElementById('sb-bank-' + idx).parentElement;
+        var btnRow = document.createElement('div');
+        btnRow.style.cssText = 'display:flex;gap:8px;margin-top:6px;';
+        var solveBtn = document.createElement('button');
+        solveBtn.className = 'btn'; solveBtn.textContent = 'Lösen';
+        (function(i) { solveBtn.addEventListener('click', function() { sbShowSolution(i); }); })(idx);
+        var resetBtn = document.createElement('button');
+        resetBtn.className = 'btn'; resetBtn.textContent = '↺ Neustart';
+        (function(i) { resetBtn.addEventListener('click', function() { sbResetOne(i); }); })(idx);
+        btnRow.appendChild(solveBtn); btnRow.appendChild(resetBtn);
+        item.appendChild(btnRow);
+    });
+}
 
 // ============================================================
 // TIMER SYSTEM
