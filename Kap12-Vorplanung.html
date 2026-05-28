@@ -73,6 +73,11 @@ body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background
 .luecke-input:focus { border-bottom-color: #764ba2; }
 .luecke-input.correct { border-bottom-color: #27ae60; background: #e8f8f0; }
 .luecke-input.wrong { border-bottom-color: #e74c3c; background: #fdeaea; }
+.word-bank { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px; padding: 14px; background: #f8f9fa; border-radius: 10px; }
+.word-bank-label { font-weight: 700; color: #667eea; font-size: 0.85em; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+.word-chip { background: white; border: 2px solid #667eea; border-radius: 16px; padding: 5px 14px; font-size: 0.88em; color: #333; cursor: pointer; transition: all 0.15s; user-select: none; }
+.word-chip:hover { background: #e8ecff; }
+.word-chip.used { opacity: 0.4; text-decoration: line-through; cursor: default; }
 
 /* ZUORDNUNG */
 .zuordnung-area { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
@@ -282,8 +287,10 @@ body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background
                 </div>
             </div>
             <div class="hilfe-box">
-                <strong>Aufgabe:</strong> Ergänzen Sie die fehlenden Wörter. Das System prüft sofort bei jeder Eingabe.
+                <strong>Aufgabe:</strong> Ergänzen Sie die fehlenden Wörter aus dem Wörterkasten. Klicken Sie zuerst in eine Lücke, dann auf das passende Wort — oder tippen Sie direkt.
             </div>
+            <div class="word-bank-label">Wörterkasten</div>
+            <div class="word-bank" id="wordBank"></div>
             <div id="lueckeContainer"></div>
         </div>
     </div>
@@ -637,6 +644,36 @@ function resetGenus() { initGenus(); }
 // LÜCKENTEXT
 // ============================================================
 function initLuecke() {
+    // Wörterkasten (shuffled)
+    var bank = document.getElementById('wordBank');
+    bank.innerHTML = '';
+    var words = LUECKE_DATA.map(function(it){ return it.blank; });
+    for(var i=words.length-1; i>0; i--){
+        var j = Math.floor(Math.random()*(i+1));
+        var t = words[i]; words[i] = words[j]; words[j] = t;
+    }
+    words.forEach(function(w){
+        var chip = document.createElement('span');
+        chip.className = 'word-chip';
+        chip.textContent = w;
+        chip.dataset.word = w;
+        chip.addEventListener('click', function(){
+            if(chip.classList.contains('used')) return;
+            var inputs = document.querySelectorAll('#lueckeContainer .luecke-input');
+            var target = null;
+            inputs.forEach(function(inp){ if(inp === document.activeElement && !inp.value) target = inp; });
+            if(!target){
+                for(var k=0; k<inputs.length; k++){ if(!inputs[k].value){ target = inputs[k]; break; } }
+            }
+            if(target){
+                target.value = w;
+                lueckeLiveCheck(target);
+                target.focus();
+            }
+        });
+        bank.appendChild(chip);
+    });
+    // Lücken
     var c = document.getElementById('lueckeContainer');
     c.innerHTML = '';
     LUECKE_DATA.forEach(function(item, idx) {
@@ -644,9 +681,21 @@ function initLuecke() {
         div.className = 'luecke-item';
         var widths = {s:'80px', m:'130px', l:'170px', xl:'210px'};
         div.innerHTML = item.pre +
-            '<input type="text" class="luecke-input" data-ans="' + item.blank + '" data-idx="' + idx + '" placeholder="" style="width:' + (widths[item.size]||'120px') + '" oninput="lueckeLiveCheck(this)">' +
+            '<input type="text" class="luecke-input" data-ans="' + item.blank + '" data-idx="' + idx + '" placeholder="" autocomplete="off" autocorrect="off" spellcheck="false" style="width:' + (widths[item.size]||'120px') + '" oninput="lueckeLiveCheck(this)">' +
             item.post;
         c.appendChild(div);
+    });
+}
+function markChipUsedIfMatch(ans){
+    document.querySelectorAll('#wordBank .word-chip').forEach(function(c){
+        if(c.dataset.word === ans) c.classList.add('used');
+    });
+}
+function refreshChipsFromInputs(){
+    // Chips erst once-used klären, dann anhand der aktuellen Inputs neu setzen
+    document.querySelectorAll('#wordBank .word-chip').forEach(function(c){ c.classList.remove('used'); });
+    document.querySelectorAll('#lueckeContainer .luecke-input.correct').forEach(function(inp){
+        markChipUsedIfMatch(inp.dataset.ans);
     });
 }
 function lueckeLiveCheck(inp) {
@@ -654,10 +703,11 @@ function lueckeLiveCheck(inp) {
     var val = inp.value.trim();
     var ans = inp.dataset.ans;
     inp.classList.remove('correct','wrong');
-    if(!val) return;
+    if(!val){ refreshChipsFromInputs(); return; }
     if(val.toLowerCase() === ans.toLowerCase()){ inp.classList.add('correct'); }
     else if(ans.toLowerCase().startsWith(val.toLowerCase())){ /* prefix — neutral */ }
     else { inp.classList.add('wrong'); }
+    refreshChipsFromInputs();
     checkLueckeAllDone();
 }
 function checkLueckeAllDone() {
@@ -669,11 +719,10 @@ function showLueckeLoesung() {
         inp.value = inp.dataset.ans;
         inp.classList.remove('wrong'); inp.classList.add('correct');
     });
+    document.querySelectorAll('#wordBank .word-chip').forEach(function(c){ c.classList.add('used'); });
 }
 function resetLuecke() {
-    document.querySelectorAll('#lueckeContainer .luecke-input').forEach(function(inp){
-        inp.value = ''; inp.classList.remove('correct','wrong');
-    });
+    initLuecke();
 }
 
 // ============================================================
