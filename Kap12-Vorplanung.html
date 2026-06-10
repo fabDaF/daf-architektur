@@ -273,7 +273,7 @@ body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background
             <h2>📖 Lesetext</h2>
             <div class="hilfe-box">
                 <strong>Projektdialog – Angestellte und Bürochef (Kap. 12.6)</strong><br>
-                Paula Pilar hat auf Basis der Wünsche der Bauherrschaft ein detailliertes Raumprogramm aufgestellt und das Konzept für das Wohnhaus am Hang erarbeitet. Nun bespricht sie ihre Arbeit mit dem Bürochef Michael Weber.
+                Paula Pilar hat auf Basis der Wünsche des Bauherrn ein detailliertes Raumprogramm aufgestellt und das Konzept für das Wohnhaus am Hang erarbeitet. Nun bespricht sie ihre Arbeit mit dem Bürochef Michael Weber.
             </div>
             <div class="story-text" id="lesetextContent"></div>
             <p style="font-size:0.78em; color:#bbb; margin-top:24px; text-align:right;">
@@ -460,10 +460,10 @@ var VORENTLASTUNG = [
     { term: 'der Schnitt, -e',           def: '✂️ vertikaler Schnitt durch ein Gebäude — zeigt Höhen, Ebenen und Split-Level' },
     { term: 'die Ansicht, -en',          def: '🏠 Außenansicht einer Fassade von vorne, hinten oder von der Seite' },
     { term: 'der Maßstab, ¨-e',          def: '📏 Verhältnis von Zeichnung zur Wirklichkeit (z. B. 1:200 bedeutet: 1 cm = 2 m)' },
-    { term: 'die Bauherrschaft (kein Pl.)', def: '👤 der Auftraggeber, der ein Bauprojekt in Auftrag gibt und finanziert' },
+    { term: 'der Bauherr, -en',          def: '👤 der Auftraggeber, der ein Bauprojekt in Auftrag gibt und finanziert' },
 ];
 
-var LESETEXT_INTRO = 'Nach der Vorbesprechung und einer gemeinsamen Ortsbegehung hat Paula auf Basis der Wünsche der Bauherrschaft ein detailliertes Raumprogramm aufgestellt. Nun bespricht sie das erarbeitete Konzept intern mit Michael Weber, dem Bürochef. Es umfasst die wichtigsten Zeichnungen, wie Grundrisse, Schnitte und Ansichten im Maßstab\u00a01:200 sowie ein Arbeitsmodell.';
+var LESETEXT_INTRO = 'Nach der Vorbesprechung und einer gemeinsamen Ortsbegehung hat Paula auf Basis der Wünsche des Bauherrn ein detailliertes Raumprogramm aufgestellt. Nun bespricht sie das erarbeitete Konzept intern mit Michael Weber, dem Bürochef. Es umfasst die wichtigsten Zeichnungen, wie Grundrisse, Schnitte und Ansichten im Maßstab\u00a01:200 sowie ein Arbeitsmodell.';
 
 var DIALOG = [
     { speaker: 'P. Pilar',   text: 'Es gibt eine Struktur aus Wänden. Diese Struktur lässt den Hang durchfließen.' },
@@ -487,7 +487,7 @@ var GENUS_DATA = [
     { word: '✂️ Schnitt',       cat: 'der' },
     { word: '🏠 Ansicht',       cat: 'die' },
     { word: '📐 Maßstab',       cat: 'der' },
-    { word: '👤 Bauherrschaft', cat: 'die' },
+    { word: '👤 Bauherr',       cat: 'der' },
     { word: '📋 Raumprogramm',  cat: 'das' },
     { word: '🏛️ Arbeitsmodell', cat: 'das' },
     { word: '✏️ Entwurf',       cat: 'der' },
@@ -554,7 +554,7 @@ var satzbauData = [
 // ============================================================
 var HIGHLIGHT_MAP = {};
 (function(){
-    var terms = ['Vorplanung','Variante','Konzept','Visualisierung','Lageplan','Grundriss','Schnitt','Ansicht','Maßstab','Bauherrschaft','Raumprogramm','Arbeitsmodell','Entwurf','Präsentation','Zeichnung'];
+    var terms = ['Vorplanung','Variante','Konzept','Visualisierung','Lageplan','Grundriss','Schnitt','Ansicht','Maßstab','Bauherr','Raumprogramm','Arbeitsmodell','Entwurf','Präsentation','Zeichnung'];
     var defs  = [
         'kreative Planungsphase (LP2)',
         'eine von mehreren Entwurfsoptionen',
@@ -577,7 +577,7 @@ var HIGHLIGHT_MAP = {};
 
 function highlightText(text) {
     Object.keys(HIGHLIGHT_MAP).forEach(function(term) {
-        var re = new RegExp('\\b(' + term + '(?:en|e|es|s)?)\\b', 'g');
+        var re = new RegExp('\\b(' + term + '(?:en|es|e|s|n)?)\\b', 'g');
         text = text.replace(re, function(m) {
             return '<span class="vocab-hl" data-def="' + HIGHLIGHT_MAP[term] + '">' + m + '</span>';
         });

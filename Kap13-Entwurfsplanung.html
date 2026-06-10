@@ -306,7 +306,7 @@ body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background
             <h2>📖 Lesetext &amp; Projektdialog</h2>
             <div class="hilfe-box">
                 <strong>13.1 Einführung Entwurfsplanung · 13.4 Projektdialog – Entwurfspräsentation beim Bauherrn (Kap. 13)</strong><br>
-                Die Entwurfsvariante ist ausgewählt und wird nun ausgearbeitet. Paula Pilar und ihr Chef haben sich für eine Variante entschieden. Heute präsentiert Paula den Entwurf bei der Bauherrschaft – Familie Burghardt.
+                Die Entwurfsvariante ist ausgewählt und wird nun ausgearbeitet. Paula Pilar und ihr Chef haben sich für eine Variante entschieden. Heute präsentiert Paula den Entwurf beim Bauherrn – Familie Burghardt.
             </div>
             <div class="story-text" id="lesetextContent"></div>
             <p style="font-size:0.78em; color:#bbb; margin-top:24px; text-align:right;">
@@ -496,11 +496,11 @@ var VORENTLASTUNG = [
     { term: 'die Baugenehmigung, -en',       def: '📋 behördliche Erlaubnis, mit dem Bauprojekt zu beginnen – erteilt vom Baurechtsamt' },
 ];
 
-var LESETEXT_INTRO = 'Die Entscheidung für eine Entwurfs-Variante ist gefallen. Diese wird nun ausgearbeitet, das heißt sie wird genauer gezeichnet. Der Maßstab vergrößert sich je nach Projektart und -größe bis zu 1:20. Parallel werden die Erschließungen überprüft. Auch die Darstellung verändert sich stark. Fotorealistische Visualisierungen helfen der Bauherrschaft, sich das Bauwerk im Kontext mit der Umgebung vorzustellen.';
+var LESETEXT_INTRO = 'Die Entscheidung für eine Entwurfs-Variante ist gefallen. Diese wird nun ausgearbeitet, das heißt sie wird genauer gezeichnet. Der Maßstab vergrößert sich je nach Projektart und -größe bis zu 1:20. Parallel werden die Erschließungen überprüft. Auch die Darstellung verändert sich stark. Fotorealistische Visualisierungen helfen dem Bauherrn, sich das Bauwerk im Kontext mit der Umgebung vorzustellen.';
 
 var LESETEXT_INTRO2 = 'Damit das Bauwerk genehmigungsfähig wird, finden Verhandlungen mit der Baubehörde statt. Viele Aspekte, wie die Wahl der Materialien, die Konstruktion und – bei Gebäuden – die Art der Fassaden fließen in die abschließende Kostenberechnung mit ein.';
 
-var DIALOG_INTRO = 'Heute ist es so weit. Paula und ihr Chef haben sich für eine Variante entschieden und diese ausgearbeitet. Es gibt eine Visualisierung mit Materialvorschlägen, ein Präsentationsmodell, Pläne im Maßstab 1:100 und eine Kostenberechnung. Gemeinsam sind sie zu Gast bei der Bauherrschaft, und Paula präsentiert den Entwurf.';
+var DIALOG_INTRO = 'Heute ist es so weit. Paula und ihr Chef haben sich für eine Variante entschieden und diese ausgearbeitet. Es gibt eine Visualisierung mit Materialvorschlägen, ein Präsentationsmodell, Pläne im Maßstab 1:100 und eine Kostenberechnung. Gemeinsam sind sie zu Gast beim Bauherrn, und Paula präsentiert den Entwurf.';
 
 var DIALOG = [
     { speaker: 'P. Pilar', text: 'Unser Büro versteht den Planungs- und Bauvorgang als offenen Dialog. Daher sind Fragen, auch während meiner Präsentation, immer willkommen. Wir haben Ihnen bei unserer Vorbesprechung genau zugehört, und ich freue mich außerordentlich, Ihnen dieses Ergebnis unseres gemeinsamen Entwurfsprozesses präsentieren zu dürfen.' },
@@ -568,11 +568,11 @@ var ZUORDNUNG_DATA = [
 ];
 
 var satzbauData = [
-  { parts: ['die', 'Entscheidung', 'für', 'eine', 'Entwurfs-Variante', 'ist', 'gefallen', ',', 'nachdem', 'die', 'Bauherrschaft', 'alle', 'Pläne', 'geprüft', 'hat'],
-    valid: [['die', 'Entscheidung', 'für', 'eine', 'Entwurfs-Variante', 'ist', 'gefallen', ',', 'nachdem', 'die', 'Bauherrschaft', 'alle', 'Pläne', 'geprüft', 'hat']],
+  { parts: ['die', 'Entscheidung', 'für', 'eine', 'Entwurfs-Variante', 'ist', 'gefallen', ',', 'nachdem', 'der', 'Bauherr', 'alle', 'Pläne', 'geprüft', 'hat'],
+    valid: [['die', 'Entscheidung', 'für', 'eine', 'Entwurfs-Variante', 'ist', 'gefallen', ',', 'nachdem', 'der', 'Bauherr', 'alle', 'Pläne', 'geprüft', 'hat']],
     punct: '.' },
-  { parts: ['fotorealistische', 'Visualisierungen', 'helfen', 'der', 'Bauherrschaft', 'sehr', ',', 'weil', 'sie', 'den', 'Entwurf', 'anschaulich', 'zeigen'],
-    valid: [['fotorealistische', 'Visualisierungen', 'helfen', 'der', 'Bauherrschaft', 'sehr', ',', 'weil', 'sie', 'den', 'Entwurf', 'anschaulich', 'zeigen']],
+  { parts: ['fotorealistische', 'Visualisierungen', 'helfen', 'dem', 'Bauherrn', 'sehr', ',', 'weil', 'sie', 'den', 'Entwurf', 'anschaulich', 'zeigen'],
+    valid: [['fotorealistische', 'Visualisierungen', 'helfen', 'dem', 'Bauherrn', 'sehr', ',', 'weil', 'sie', 'den', 'Entwurf', 'anschaulich', 'zeigen']],
     punct: '.' },
   { parts: ['ich', 'führe', 'Sie', 'anhand', 'der', 'Zeichnungen', 'durch', 'das', 'Gebäude', ',', 'damit', 'Sie', 'den', 'Entwurf', 'verstehen'],
     valid: [['ich', 'führe', 'Sie', 'anhand', 'der', 'Zeichnungen', 'durch', 'das', 'Gebäude', ',', 'damit', 'Sie', 'den', 'Entwurf', 'verstehen']],
@@ -1578,7 +1578,7 @@ function schreibLeeren() {
    hüllt Init/Lösung/Reset. Original-Logik für Sätze ohne row bleibt unberührt. */
 (function(){
   var CFG = {"bank":"sb-bank-","row":"sb-row-","fb":"sb-fb-","caps":true,"click":false,"tab":5};
-  var SBGAP = [{"i":0,"row":["_","Entscheidung","_","_","Entwurfs-Variante","_","_","_","_","_","Bauherrschaft","_","Pläne","_","_"],"parts":["die","für","eine","ist","gefallen",",","nachdem","die","alle","geprüft","hat"]},{"i":1,"row":["_","Visualisierungen","_","_","Bauherrschaft","_","_","weil","_","_","Entwurf","_","_"],"parts":["fotorealistische","helfen","der","sehr",",","sie","den","anschaulich","zeigen"]},{"i":2,"row":["_","_","_","anhand","_","Zeichnungen","_","_","Gebäude","_","_","_","_","Entwurf","_"],"parts":["ich","führe","Sie","der","durch","das",",","damit","Sie","den","verstehen"]},{"i":3,"row":["_","Außenraum-Grün","_","_","Teil","_","_","_","weil","_","Terrassen","_","_"],"parts":["das","wird","ein","des","Gebäudes",",","die","bepflanzt","werden"]},{"i":4,"row":["_","_","Blickbeziehungen","_","Westen","_","_","_","weil","_","Fassade","_","_","_"],"parts":["neue","interessante","nach","werden","geschaffen",",","die","dort","geöffnet","wird"]},{"i":5,"row":["_","Baukörper","_","_","_","angrenzende","_","_","indem","_","_","Höhe","_"],"parts":["der","reagiert","auf","die","Bebauung",",","er","ihre","aufnimmt"]},{"i":6,"row":["_","_","_","heute","_","_","weil","_","_","Frage","_","Grundrissvariante","_"],"parts":["ich","rufe","Sie","an",",","ich","eine","zur","habe"]},{"i":7,"row":["_","_","bitte","_","langsamer","_","_","damit","_","_","richtig","_","_"],"parts":["würden","Sie","etwas","sprechen",",","ich","alles","notieren","kann"]}];
+  var SBGAP = [{"i":0,"row":["_","Entscheidung","_","_","Entwurfs-Variante","_","_","_","_","_","Bauherr","_","Pläne","_","_"],"parts":["die","für","eine","ist","gefallen",",","nachdem","der","alle","geprüft","hat"]},{"i":1,"row":["_","Visualisierungen","_","_","Bauherrn","_","_","weil","_","_","Entwurf","_","_"],"parts":["fotorealistische","helfen","dem","sehr",",","sie","den","anschaulich","zeigen"]},{"i":2,"row":["_","_","_","anhand","_","Zeichnungen","_","_","Gebäude","_","_","_","_","Entwurf","_"],"parts":["ich","führe","Sie","der","durch","das",",","damit","Sie","den","verstehen"]},{"i":3,"row":["_","Außenraum-Grün","_","_","Teil","_","_","_","weil","_","Terrassen","_","_"],"parts":["das","wird","ein","des","Gebäudes",",","die","bepflanzt","werden"]},{"i":4,"row":["_","_","Blickbeziehungen","_","Westen","_","_","_","weil","_","Fassade","_","_","_"],"parts":["neue","interessante","nach","werden","geschaffen",",","die","dort","geöffnet","wird"]},{"i":5,"row":["_","Baukörper","_","_","_","angrenzende","_","_","indem","_","_","Höhe","_"],"parts":["der","reagiert","auf","die","Bebauung",",","er","ihre","aufnimmt"]},{"i":6,"row":["_","_","_","heute","_","_","weil","_","_","Frage","_","Grundrissvariante","_"],"parts":["ich","rufe","Sie","an",",","ich","eine","zur","habe"]},{"i":7,"row":["_","_","bitte","_","langsamer","_","_","damit","_","_","richtig","_","_"],"parts":["würden","Sie","etwas","sprechen",",","ich","alles","notieren","kann"]}];
   SBGAP.forEach(function(g){ var ex = satzbauData[g.i]; if (!ex) return;
     ex.row = g.row; ex.parts = g.parts;
     if (typeof ex.valid[0] === "string") ex.valid = [ex.valid];
