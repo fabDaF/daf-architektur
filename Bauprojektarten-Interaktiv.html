@@ -1629,16 +1629,106 @@ function resetLuecken() {
 // ─────────────────────────────────────────────────────────────────────────────
 
 var MC_DATA = [
-    { q: 'Was ist das Hauptthema des Textes?', opts: ['Die verschiedenen Bauprojektarten in Deutschland', 'Die Geschichte des Wohnungsbaus in Hamburg', 'Die Ausbildung zum Architekten', 'Die Kosten von Luxuswohnungen'], correct: 0 },
-    { q: 'Was ist der Unterschied zwischen Hochbau und Tiefbau?', opts: ['Hochbau ist oberhalb, Tiefbau unterhalb der Geländeoberfläche', 'Hochbau ist teurer als Tiefbau', 'Hochbau braucht mehr Arbeiter', 'Tiefbau ist moderner als Hochbau'], correct: 0 },
-    { q: 'Was gehört NICHT zum Hochbau?', opts: ['Tunnelbau', 'Wohnungsbau', 'Verwaltungsgebäude', 'Hotels'], correct: 0 },
-    { q: 'Was bedeutet „Mischnutzung“?', opts: ['Ein Gebäude hat verschiedene Nutzungen (z. B. Wohnen und Büro)', 'Ein Gebäude wird aus verschiedenen Materialien gebaut', 'Mehrere Architekten arbeiten am gleichen Projekt', 'Das Gebäude steht in einem gemischten Stadtviertel'], correct: 0 },
-    { q: 'Was ist der Rohbau?', opts: ['Die äußere Hülle des Gebäudes ohne Innenausbau', 'Ein unfertiges Projekt', 'Ein Gebäude aus rohem Holz', 'Die erste Planungsphase'], correct: 0 },
-    { q: 'Was gehört zum Innenausbau?', opts: ['Fußboden, Wandverkleidung und Haustechnik', 'Fundamente und Keller', 'Straßenbau und Kanalisation', 'Fassade und Dach'], correct: 0 },
-    { q: 'Was ist ein „Gewerk“?', opts: ['Eine Teilaufgabe der Bauleistung', 'Ein Werkzeug auf der Baustelle', 'Ein Architekturbüro', 'Ein Bauvertrag'], correct: 0 },
-    { q: 'Was ist der Unterschied zwischen Sanierung und Renovierung?', opts: ['Sanierung ist umfangreicher als Renovierung', 'Renovierung ist teurer', 'Sanierung betrifft nur das Dach', 'Es gibt keinen Unterschied'], correct: 0 },
-    { q: 'Warum ist „Bauen im Bestand“ in Hamburg besonders wichtig?', opts: ['Weil es viele historische Gebäude gibt, die modernisiert werden müssen', 'Weil es in Hamburg kein freies Bauland gibt', 'Weil Neubauten in Hamburg verboten sind', 'Weil Hamburger nur alte Häuser mögen'], correct: 0 },
-    { q: 'Was braucht man vor dem Baubeginn von der Behörde?', opts: ['Eine Baugenehmigung', 'Einen Architektenvertrag', 'Eine Versicherung', 'Einen Finanzierungsplan'], correct: 0 }
+  {
+    "q": "Was ist das Hauptthema des Textes?",
+    "opts": [
+      "Die Geschichte des Wohnungsbaus in Hamburg",
+      "Die Kosten von Luxuswohnungen",
+      "Die Ausbildung zum Architekten",
+      "Die verschiedenen Bauprojektarten in Deutschland"
+    ],
+    "correct": 3
+  },
+  {
+    "q": "Was ist der Unterschied zwischen Hochbau und Tiefbau?",
+    "opts": [
+      "Tiefbau ist moderner als Hochbau",
+      "Hochbau ist oberhalb, Tiefbau unterhalb der Geländeoberfläche",
+      "Hochbau ist teurer als Tiefbau",
+      "Hochbau braucht mehr Arbeiter"
+    ],
+    "correct": 1
+  },
+  {
+    "q": "Was gehört NICHT zum Hochbau?",
+    "opts": [
+      "Wohnungsbau",
+      "Verwaltungsgebäude",
+      "Hotels",
+      "Tunnelbau"
+    ],
+    "correct": 3
+  },
+  {
+    "q": "Was bedeutet „Mischnutzung“?",
+    "opts": [
+      "Das Gebäude steht in einem gemischten Stadtviertel",
+      "Mehrere Architekten arbeiten am gleichen Projekt",
+      "Ein Gebäude wird aus verschiedenen Materialien gebaut",
+      "Ein Gebäude hat verschiedene Nutzungen (z. B. Wohnen und Büro)"
+    ],
+    "correct": 3
+  },
+  {
+    "q": "Was ist der Rohbau?",
+    "opts": [
+      "Die erste Planungsphase",
+      "Ein unfertiges Projekt",
+      "Die äußere Hülle des Gebäudes ohne Innenausbau",
+      "Ein Gebäude aus rohem Holz"
+    ],
+    "correct": 2
+  },
+  {
+    "q": "Was gehört zum Innenausbau?",
+    "opts": [
+      "Fassade und Dach",
+      "Fundamente und Keller",
+      "Straßenbau und Kanalisation",
+      "Fußboden, Wandverkleidung und Haustechnik"
+    ],
+    "correct": 3
+  },
+  {
+    "q": "Was ist ein „Gewerk“?",
+    "opts": [
+      "Ein Bauvertrag",
+      "Ein Werkzeug auf der Baustelle",
+      "Ein Architekturbüro",
+      "Eine Teilaufgabe der Bauleistung"
+    ],
+    "correct": 3
+  },
+  {
+    "q": "Was ist der Unterschied zwischen Sanierung und Renovierung?",
+    "opts": [
+      "Renovierung ist teurer",
+      "Sanierung ist umfangreicher als Renovierung",
+      "Sanierung betrifft nur das Dach",
+      "Es gibt keinen Unterschied"
+    ],
+    "correct": 1
+  },
+  {
+    "q": "Warum ist „Bauen im Bestand“ in Hamburg besonders wichtig?",
+    "opts": [
+      "Weil Hamburger nur alte Häuser mögen",
+      "Weil es viele historische Gebäude gibt, die modernisiert werden müssen",
+      "Weil es in Hamburg kein freies Bauland gibt",
+      "Weil Neubauten in Hamburg verboten sind"
+    ],
+    "correct": 1
+  },
+  {
+    "q": "Was braucht man vor dem Baubeginn von der Behörde?",
+    "opts": [
+      "Einen Finanzierungsplan",
+      "Eine Versicherung",
+      "Einen Architektenvertrag",
+      "Eine Baugenehmigung"
+    ],
+    "correct": 3
+  }
 ];
 
 function initMC() {
